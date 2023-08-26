@@ -1,10 +1,10 @@
 /// <reference types="@platformatic/db" />
 import { EntityHooks } from '@platformatic/sql-mapper'
-import { EntityTypes, Movie } from './types'
+import { EntityTypes, User } from './types'
 
 declare module 'fastify' {
   interface FastifyInstance {
-    getSchema<T extends 'Movie'>(schemaId: T): {
+    getSchema<T extends 'User'>(schemaId: T): {
       '$id': string,
       title: string,
       description: string,
@@ -19,12 +19,12 @@ declare module 'fastify' {
 
 declare module '@platformatic/sql-mapper' {
   interface Entities {
-    movie: Entity<Movie>,
+    user: Entity<User>,
   }
 }
 
 declare module '@platformatic/types' {
   interface PlatformaticApp {
-    addEntityHooks(entityName: 'movie', hooks: EntityHooks<Movie>): any
+    addEntityHooks(entityName: 'user', hooks: EntityHooks<User>): any
   }
 }
