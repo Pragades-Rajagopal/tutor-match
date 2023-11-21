@@ -23,7 +23,7 @@
   },
   "plugins": {
     "paths": [
-      "plugin.js"
+      "./plugins/"
     ]
   },
   "types": {
