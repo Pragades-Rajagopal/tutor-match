@@ -1,6 +1,6 @@
-# Platformatic DB API
+# Tutoree Backend Service
 
-This is a generated [Platformatic DB](https://docs.platformatic.dev/docs/reference/db/introduction) application.
+Developed using Platformatic DB
 
 ## Requirements
 
@@ -30,9 +30,9 @@ Run the API with:
 npm start
 ```
 
-### Explore
-- ⚡ The Platformatic DB server is running at http://localhost:3042/
-- 📔 View the REST API's Swagger documentation at http://localhost:3042/documentation/
-- 🔍 Try out the GraphiQL web UI at http://localhost:3042/graphiql
+### Links
+- ⚡App >  http://localhost:3042/
+- 📔 Swagger documentation > http://localhost:3042/documentation/
+- 🔍 GraphiQL > http://localhost:3042/graphiql
 
 
