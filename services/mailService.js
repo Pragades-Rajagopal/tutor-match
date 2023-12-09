@@ -25,7 +25,7 @@ module.exports = {
             const info = await transporter.sendMail({
                 from: process.env.TUTOR_MAIL,
                 to: email,
-                subject: 'Test mail',
+                subject: 'Tutoree - Email verification',
                 text: pin,
             });
             app.log.info(info);
