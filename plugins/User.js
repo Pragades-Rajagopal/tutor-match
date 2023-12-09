@@ -3,9 +3,11 @@
 
 const moment = require('moment');
 const mailService = require('../services/mailService');
+const otpService = require('../services/otpService');
+const customSwagger = require('../custom.swagger.json');
 
 /** @param {import('fastify').FastifyInstance} app */
-module.exports = async function (app) {
+module.exports = async (app) => {
     app.log.info('User plugin loaded');
 
     app.platformatic.addEntityHooks('user', {
@@ -14,8 +16,24 @@ module.exports = async function (app) {
             options.input.createdOn = currentTime;
             options.input.modifiedOn = currentTime;
             const email = options.input.email;
-            await mailService.sendEmail(app, email);
-            return await originalSave(options);
+            const result = await originalSave(options);
+            if (result) {
+                const result = await otpService.generateOTP(app, email);
+                await mailService.sendEmail(app, email, result);
+            }
+            app.log.info(result);
+            return result;
         }
     });
+
+    const otpValidator = async (request, response) => {
+        const result = await otpService.validateOTP(app, request.body.email, request.body.pin);
+        return result
+    }
+
+    app.post(
+        '/validate-otp',
+        customSwagger.validateOTPSchema,
+        otpValidator
+    )
 }

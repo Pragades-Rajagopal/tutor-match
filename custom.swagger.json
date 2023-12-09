@@ -1,0 +1,35 @@
+{
+    "validateOTPSchema": {
+        "schema": {
+            "body": {
+                "$ref": "Otp"
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "validateOtp": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string"
+                    },
+                    "otp": {
+                        "type": "string"
+                    }
+                }
+            },
+            "validateOtpResponse": {
+                "type": "object",
+                "properties": {
+                    "status": {
+                        "type": "integer"
+                    },
+                    "message": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    }
+}

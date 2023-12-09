@@ -1,21 +1,32 @@
+const path = require('path');
+require('dotenv').config({
+    path: path.resolve('./.env'),
+});
+
 const nodemailer = require('nodemailer');
 
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    service: process.env.MAIL_SERVICE,
     auth: {
-        user: "{MAIL_USER}",
-        pass: "{MAIL_PASS}",
+        user: process.env.MAIL_USER,
+        pass: process.env.MAIL_PASS,
     }
 });
 
 module.exports = {
-    sendEmail: async (app, email) => {
+    /**
+     * Triggers an email when a new user is registered
+     * @param {FastifyInstance} app 
+     * @param {string} email 
+     * @param {string} pin
+     */
+    sendEmail: async (app, email, pin) => {
         try {
             const info = await transporter.sendMail({
-                from: "{MAIL_USER}",
+                from: process.env.TUTOR_MAIL,
                 to: email,
                 subject: 'Test mail',
-                text: 'Hello there!',
+                text: pin,
             });
             app.log.info(info);
         } catch (error) {
