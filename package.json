@@ -11,6 +11,7 @@
     "@platformatic/sql-graphql": "^0.38.1",
     "@platformatic/sql-mapper": "^0.38.1",
     "dotenv": "^16.3.1",
+    "handlebars": "^4.7.8",
     "moment": "^2.29.4",
     "nodemailer": "^6.9.7",
     "platformatic": "^0.38.1"
