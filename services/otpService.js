@@ -1,3 +1,4 @@
+const { otpMessages, statusCode } = require('../config/constants');
 module.exports = {
     /**
      * Generates OTP and inserts into OTP table
@@ -13,13 +14,20 @@ module.exports = {
                 insert into otp (email, pin)
                 values (${email}, ${pin})
             `);
-            app.log.info('OTP generated');
+            app.log.info(otpMessages.generated);
             return pin;
         } catch (error) {
             app.log.error(error);
         }
     },
 
+    /**
+     * Validates OTP for the given email address
+     * @param {FastifyInstance} app 
+     * @param {string} email 
+     * @param {string} otp 
+     * @returns {object}
+     */
     validateOTP: async (app, email, otp) => {
         try {
             const { db, sql } = app.platformatic;
@@ -31,38 +39,58 @@ module.exports = {
             `);
             if (!data || data.length === 0) {
                 return {
-                    status: 404,
-                    message: 'Email not found'
+                    status: statusCode.notFound,
+                    message: otpMessages.notFound
                 };
             }
             if (data && data['0'].pin === otp) {
-                app.log.info('OTP validated');
+                app.log.info(otpMessages.validated);
                 return {
-                    status: 200,
-                    message: 'OTP validated'
+                    status: statusCode.success,
+                    message: otpMessages.validated
                 };
             } else {
-                app.log.info('OTP not validated');
+                app.log.info(otpMessages.notValidated);
                 return {
-                    status: 400,
-                    message: 'OTP not validated'
+                    status: statusCode.error,
+                    message: otpMessages.notValidated
                 }
             }
         } catch (error) {
-            app.log.error('Error while validating OTP');
+            app.log.error(otpMessages.error);
+            console.log(error);
             return {
-                status: 500,
-                message: 'Error while validating OTP'
+                status: statusCode.serverError,
+                message: otpMessages.error
             }
         }
     },
+
+    /**
+     * Updates status in User model after email verification
+     * @param {FastifyInstance} app 
+     * @param {string} email 
+     */
+    updateVerificationStatus: async (app, email) => {
+        try {
+            const { db, sql } = app.platformatic;
+            await db.query(sql`
+                update users
+                set is_email_verified = 1
+                where email = ${email}
+            `);
+            app.log.info(otpMessages.verified);
+        } catch (error) {
+            app.log.info(otpMessages.verifyError);
+        }
+    }
 }
 
 /**
  * Generates a 4 digit number
  * @returns {string} pin
  */
-function generatePin() {
+const generatePin = () => {
     const min = 0;
     const max = 9999;
     const rNum = Math.floor(Math.random() * (max - min + 1)) + min;

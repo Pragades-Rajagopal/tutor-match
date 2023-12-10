@@ -5,6 +5,7 @@ const moment = require('moment');
 const mailService = require('../services/mailService');
 const otpService = require('../services/otpService');
 const customSwagger = require('../custom.swagger.json');
+const { statusCode } = require('../config/constants');
 
 /** @param {import('fastify').FastifyInstance} app */
 module.exports = async (app) => {
@@ -26,11 +27,26 @@ module.exports = async (app) => {
         }
     });
 
+    /**
+     * Local method - Validates OTP for the user
+     * 
+     * Calls `validateOTP` method from OTP service
+     * @param {*} request 
+     * @param {*} response 
+     * @returns {object}
+     */
     const otpValidator = async (request, response) => {
-        const result = await otpService.validateOTP(app, request.body.email, request.body.pin);
+        const { email, pin } = request.body;
+        const result = await otpService.validateOTP(app, email, pin);
+        if (result.status === statusCode.success) {
+            await otpService.updateVerificationStatus(app, email);
+        }
         return result
     }
 
+    /**
+     * Custom User routes
+     */
     app.post(
         '/validate-otp',
         customSwagger.validateOTPSchema,
