@@ -4,6 +4,7 @@
 const moment = require('moment');
 const mailService = require('../services/mailService');
 const otpService = require('../services/otpService');
+const loginService = require('../services/loginService');
 const customSwagger = require('../custom.swagger.json');
 const { statusCode } = require('../config/constants');
 
@@ -17,6 +18,8 @@ module.exports = async (app) => {
             options.input.createdOn = currentTime;
             options.input.modifiedOn = currentTime;
             const email = options.input.email;
+            // Hashing the password
+            options.input.password = await loginService.hashPass(app, options.input.password);
             const result = await originalSave(options);
             if (result) {
                 const result = await otpService.generateOTP(app, email);
@@ -45,11 +48,32 @@ module.exports = async (app) => {
     }
 
     /**
+     * Local method - Verifies user login and generates token
+     * 
+     * - Calls `verifyPass` method from Login service
+     * @param {*} request 
+     * @param {*} response 
+     * @returns {object}
+     */
+    const userLogin = async (request, response) => {
+        const { email, password } = request.body;
+        const verify = await loginService.verifyPass(app, email, password);
+        return {
+            message: verify
+        };
+    }
+
+    /**
      * Custom User routes
      */
     app.post(
         '/validate-otp',
         customSwagger.validateOTPSchema,
         otpValidator
-    )
+    );
+
+    app.post(
+        '/login',
+        userLogin
+    );
 }
