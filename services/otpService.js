@@ -17,6 +17,7 @@ module.exports = {
             app.log.info(otpMessages.generated);
             return pin;
         } catch (error) {
+            app.log.error(otpMessages.generateError);
             app.log.error(error);
         }
     },
@@ -58,7 +59,7 @@ module.exports = {
             }
         } catch (error) {
             app.log.error(otpMessages.error);
-            console.log(error);
+            app.log.error(error);
             return {
                 status: statusCode.serverError,
                 message: otpMessages.error
@@ -76,12 +77,14 @@ module.exports = {
             const { db, sql } = app.platformatic;
             await db.query(sql`
                 update users
-                set is_email_verified = 1
+                set is_email_verified = 1,
+                _status = 1
                 where email = ${email}
             `);
             app.log.info(otpMessages.verified);
         } catch (error) {
-            app.log.info(otpMessages.verifyError);
+            app.log.error(otpMessages.verifyError);
+            app.log.error(error);
         }
     }
 }

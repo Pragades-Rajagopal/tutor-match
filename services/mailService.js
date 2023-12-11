@@ -34,8 +34,10 @@ module.exports = {
                 subject: constants.email.verificationSubject,
                 html: finalTemplate,
             });
+            app.log.info(constants.email.messages.sent);
             app.log.info(info);
         } catch (error) {
+            app.log.error(constants.email.messages.triggerError);
             app.log.error(error);
         }
     }
