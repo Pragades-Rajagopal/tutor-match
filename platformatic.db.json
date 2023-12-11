@@ -10,7 +10,11 @@
   "db": {
     "connectionString": "{DATABASE_URL}",
     "graphql": true,
-    "openapi": true
+    "openapi": {
+      "ignore": {
+        "otp": true
+      }
+    }
   },
   "watch": {
     "ignore": [
