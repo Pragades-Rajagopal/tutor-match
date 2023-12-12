@@ -40,20 +40,20 @@ module.exports = {
             `);
             if (!data || data.length === 0) {
                 return {
-                    status: statusCode.notFound,
+                    statusCode: statusCode.notFound,
                     message: otpMessages.notFound
                 };
             }
             if (data && data['0'].pin === otp) {
                 app.log.info(otpMessages.validated);
                 return {
-                    status: statusCode.success,
+                    statusCode: statusCode.success,
                     message: otpMessages.validated
                 };
             } else {
                 app.log.info(otpMessages.notValidated);
                 return {
-                    status: statusCode.error,
+                    statusCode: statusCode.error,
                     message: otpMessages.notValidated
                 }
             }
@@ -61,7 +61,7 @@ module.exports = {
             app.log.error(otpMessages.error);
             app.log.error(error);
             return {
-                status: statusCode.serverError,
+                statusCode: statusCode.serverError,
                 message: otpMessages.error
             }
         }

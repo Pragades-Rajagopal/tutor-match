@@ -5,8 +5,9 @@ const moment = require('moment');
 const mailService = require('../services/mailService');
 const otpService = require('../services/otpService');
 const loginService = require('../services/loginService');
+const middleware = require('../services/middlewareService');
 const customSwagger = require('../custom.swagger.json');
-const { statusCode } = require('../config/constants');
+const { statusCode, user } = require('../config/constants');
 
 /** @param {import('fastify').FastifyInstance} app */
 module.exports = async (app) => {
@@ -57,10 +58,34 @@ module.exports = async (app) => {
      */
     const userLogin = async (request, response) => {
         const { email, password } = request.body;
+        const { db, sql } = app.platformatic;
+        const currentTime = moment().utcOffset('+05:30').format('YYYY-MM-DD HH:mm:ss');
         const verify = await loginService.verifyPass(app, email, password);
+        console.log(verify);
+        if (verify === statusCode.notFound) {
+            return {
+                statusCode: statusCode.notFound,
+                message: user.notRegistered
+            }
+        } else if (!verify) {
+            return {
+                statusCode: statusCode.unauthorized,
+                message: user.incorrectAuth
+            }
+        }
+        // Generates JWT and saves in database
+        const token = middleware.generateToken(email);
+        await db.query(sql`
+            DELETE FROM user_login WHERE email = ${email};
+            INSERT INTO user_login (email, token, created_on)
+            VALUES (${email}, ${token}, ${currentTime})
+        `);
         return {
-            message: verify
-        };
+            statusCode: statusCode.success,
+            message: {
+                token: token
+            }
+        }
     }
 
     /**

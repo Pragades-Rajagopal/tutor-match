@@ -19,6 +19,7 @@ module.exports = {
     statusCode: {
         success: 200,
         error: 400,
+        unauthorized: 401,
         notFound: 404,
         serverError: 500
     },
@@ -33,6 +34,7 @@ module.exports = {
         }
     },
     user: {
-        notRegistered: 'User not registered'
+        notRegistered: 'User not registered or OTP not verified',
+        incorrectAuth: 'Please enter the correct password'
     }
 }
