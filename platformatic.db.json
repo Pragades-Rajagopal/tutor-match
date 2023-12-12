@@ -12,7 +12,8 @@
     "graphql": true,
     "openapi": {
       "ignore": {
-        "otp": true
+        "otp": true,
+        "userLogin": true
       }
     }
   },
