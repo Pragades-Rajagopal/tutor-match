@@ -13,6 +13,7 @@
     "bcrypt": "^5.1.1",
     "dotenv": "^16.3.1",
     "handlebars": "^4.7.8",
+    "jsonwebtoken": "^9.0.2",
     "moment": "^2.29.4",
     "nodemailer": "^6.9.7",
     "platformatic": "^0.38.1"
