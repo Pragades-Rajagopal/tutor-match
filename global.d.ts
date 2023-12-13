@@ -1,10 +1,10 @@
 /// <reference types="@platformatic/db" />
 import { EntityHooks } from '@platformatic/sql-mapper'
-import { EntityTypes, Otp, User, UserLogin } from './types'
+import { EntityTypes, Course, Otp, User, UserLogin } from './types'
 
 declare module 'fastify' {
   interface FastifyInstance {
-    getSchema<T extends 'Otp' | 'User' | 'UserLogin'>(schemaId: T): {
+    getSchema<T extends 'Course' | 'Otp' | 'User' | 'UserLogin'>(schemaId: T): {
       '$id': string,
       title: string,
       description: string,
@@ -19,6 +19,7 @@ declare module 'fastify' {
 
 declare module '@platformatic/sql-mapper' {
   interface Entities {
+    course: Entity<Course>,
     otp: Entity<Otp>,
     user: Entity<User>,
     userLogin: Entity<UserLogin>,
@@ -27,6 +28,7 @@ declare module '@platformatic/sql-mapper' {
 
 declare module '@platformatic/types' {
   interface PlatformaticApp {
+    addEntityHooks(entityName: 'course', hooks: EntityHooks<Course>): any
     addEntityHooks(entityName: 'otp', hooks: EntityHooks<Otp>): any
     addEntityHooks(entityName: 'user', hooks: EntityHooks<User>): any
     addEntityHooks(entityName: 'userLogin', hooks: EntityHooks<UserLogin>): any

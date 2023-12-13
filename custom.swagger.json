@@ -2,31 +2,86 @@
     "validateOTPSchema": {
         "schema": {
             "body": {
-                "$ref": "Otp"
-            }
-        }
-    },
-    "components": {
-        "schemas": {
-            "validateOtp": {
                 "type": "object",
                 "properties": {
                     "email": {
                         "type": "string"
                     },
-                    "otp": {
+                    "pin": {
                         "type": "string"
                     }
                 }
             },
-            "validateOtpResponse": {
+            "response": {
+                "200": {
+                    "description": "Successful response",
+                    "type": "object",
+                    "properties": {
+                        "statusCode": {
+                            "type": "number"
+                        },
+                        "message": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "default": {
+                    "description": "Default response",
+                    "type": "object",
+                    "properties": {
+                        "statusCode": {
+                            "type": "number"
+                        },
+                        "message": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "loginSchema": {
+        "schema": {
+            "body": {
                 "type": "object",
                 "properties": {
-                    "status": {
-                        "type": "integer"
-                    },
-                    "message": {
+                    "email": {
                         "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    }
+                }
+            },
+            "response": {
+                "200": {
+                    "description": "Successful response",
+                    "type": "object",
+                    "properties": {
+                        "statusCode": {
+                            "type": "number"
+                        },
+                        "message": {
+                            "type": "string"
+                        },
+                        "token": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "default": {
+                    "description": "Default response",
+                    "type": "object",
+                    "properties": {
+                        "statusCode": {
+                            "type": "number"
+                        },
+                        "message": {
+                            "type": "string"
+                        },
+                        "token": {
+                            "type": "string"
+                        }
                     }
                 }
             }
