@@ -65,12 +65,14 @@ module.exports = async (app) => {
         if (verify === statusCode.notFound) {
             return {
                 statusCode: statusCode.notFound,
-                message: user.notRegistered
+                message: user.notRegistered,
+                token: ""
             }
         } else if (!verify) {
             return {
                 statusCode: statusCode.unauthorized,
-                message: user.incorrectAuth
+                message: user.incorrectAuth,
+                token: ""
             }
         }
         // Generates JWT and saves in database
@@ -82,9 +84,8 @@ module.exports = async (app) => {
         `);
         return {
             statusCode: statusCode.success,
-            message: {
-                token: token
-            }
+            message: "success",
+            token: token
         }
     }
 
@@ -99,6 +100,7 @@ module.exports = async (app) => {
 
     app.post(
         '/login',
+        customSwagger.loginSchema,
         userLogin
     );
 }
