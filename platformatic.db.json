@@ -28,7 +28,7 @@
   },
   "plugins": {
     "paths": [
-      "./plugins/"
+      "./plugins"
     ]
   },
   "types": {
