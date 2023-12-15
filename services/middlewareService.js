@@ -13,7 +13,7 @@ module.exports = {
      */
     generateToken: (email) => {
         const payload = { email: email };
-        const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN, { algorithm: "HS256" });
+        const accessToken = jwt.sign(payload, process.env.PLT_ACCESS_TOKEN, { algorithm: "HS256" });
         return accessToken;
     }
 }
