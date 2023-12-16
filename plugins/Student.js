@@ -12,6 +12,7 @@ module.exports = async (app) => {
             const currentTime = moment().utcOffset('+05:30').format('YYYY-MM-DD HH:mm:ss');
             options.input.createdOn = currentTime;
             options.input.modifiedOn = currentTime;
+            options.input.courseId = JSON.stringify(options.input.courseId.split(','));
             const result = await originalSave(options);
             return result;
         }
