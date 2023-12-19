@@ -13,7 +13,8 @@
     "openapi": {
       "ignore": {
         "otp": true,
-        "userLogin": true
+        "userLogin": true,
+        "students": true
       }
     }
   },

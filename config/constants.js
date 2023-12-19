@@ -35,6 +35,7 @@ module.exports = {
     },
     user: {
         notRegistered: 'User not registered or OTP not verified',
-        incorrectAuth: 'Please enter the correct password'
+        incorrectAuth: 'Please enter the correct password',
+        registered: 'User registered and OTP sent to your email address'
     }
 }

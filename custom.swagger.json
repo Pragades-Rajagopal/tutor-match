@@ -40,6 +40,50 @@
             }
         }
     },
+    "resendOTPSchema": {
+        "schema": {
+            "body": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string"
+                    }
+                }
+            },
+            "response": {
+                "200": {
+                    "description": "Successful response",
+                    "type": "object",
+                    "properties": {
+                        "statusCode": {
+                            "type": "number"
+                        },
+                        "message": {
+                            "type": "string"
+                        },
+                        "error": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "default": {
+                    "description": "Default response",
+                    "type": "object",
+                    "properties": {
+                        "statusCode": {
+                            "type": "number"
+                        },
+                        "message": {
+                            "type": "string"
+                        },
+                        "error": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
     "loginSchema": {
         "schema": {
             "body": {
@@ -80,6 +124,50 @@
                             "type": "string"
                         },
                         "token": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "saveStudentSchema": {
+        "schema": {
+            "body": {
+                "type": "object",
+                "properties": {
+                    "studentId": {
+                        "type": "number"
+                    },
+                    "courseIds": {
+                        "type": "array",
+                        "items": {
+                            "type": "number"
+                        }
+                    }
+                }
+            },
+            "response": {
+                "201": {
+                    "description": "Successful response",
+                    "type": "object",
+                    "properties": {
+                        "statusCode": {
+                            "type": "number"
+                        },
+                        "message": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "default": {
+                    "description": "Default response",
+                    "type": "object",
+                    "properties": {
+                        "statusCode": {
+                            "type": "number"
+                        },
+                        "message": {
                             "type": "string"
                         }
                     }

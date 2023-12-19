@@ -7,6 +7,6 @@ declare interface Student {
     courseId?: string | null;
     createdOn: string;
     modifiedOn: string;
-    studentId?: number | null;
+    studentId: number;
 }
 export { Student };

@@ -90,6 +90,31 @@ module.exports = async (app) => {
     }
 
     /**
+     * Resends OTP to the email
+     * @param {*} request 
+     * @param {*} response 
+     * @returns Triggers email
+     */
+    const resendOTP = async (request, response) => {
+        try {
+            const email = request.body.email;
+            const result = await otpService.generateOTP(app, email);
+            await mailService.sendEmail(app, email, result);
+            return {
+                statusCode: 200,
+                message: 'OTP sent to your registered email address',
+                error: null
+            };
+        } catch (error) {
+            return {
+                statusCode: 200,
+                message: null,
+                error: 'Error while resending OTP'
+            };
+        }
+    }
+
+    /**
      * Custom User routes
      */
     app.post(
@@ -102,5 +127,11 @@ module.exports = async (app) => {
         '/login',
         customSwagger.loginSchema,
         userLogin
+    );
+
+    app.post(
+        '/resend-otp',
+        customSwagger.resendOTPSchema,
+        resendOTP
     );
 }
