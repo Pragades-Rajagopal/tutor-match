@@ -14,7 +14,8 @@
       "ignore": {
         "otp": true,
         "userLogin": true,
-        "students": true
+        "students": true,
+        "courses": true
       }
     }
   },

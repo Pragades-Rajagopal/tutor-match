@@ -31,11 +31,21 @@ module.exports = {
         verification: {
             success: 'Password verified',
             error: 'Error while verifying the password'
+        },
+        resetPassword: {
+            success: 'Password reset successful',
+            error: 'Error occurred while resetting password'
         }
     },
     user: {
         notRegistered: 'User not registered or OTP not verified',
         incorrectAuth: 'Please enter the correct password',
         registered: 'User registered and OTP sent to your email address'
+    },
+    student: {
+        interestAdded: 'Interests added',
+        addInterestError: 'Error while adding interests for the student',
+        interestNotFound: 'Interests not found for the student',
+        getInterest: 'Interests found'
     }
 }

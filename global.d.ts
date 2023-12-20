@@ -1,6 +1,6 @@
 /// <reference types="@platformatic/db" />
 import { EntityHooks } from '@platformatic/sql-mapper'
-import { EntityTypes, Course, Otp, Student, User, UserLogin } from './types'
+import { EntityTypes, Course,Otp,Student,User,UserLogin } from './types'
 
 declare module 'fastify' {
   interface FastifyInstance {

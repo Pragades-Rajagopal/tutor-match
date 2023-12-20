@@ -4,7 +4,7 @@
  */
 declare interface Student {
     id?: number;
-    courseId?: string | null;
+    courseId: number;
     createdOn: string;
     modifiedOn: string;
     studentId: number;

@@ -131,6 +131,50 @@
             }
         }
     },
+    "resetPassword": {
+        "schema": {
+            "body": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string"
+                    },
+                    "otp": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    }
+                }
+            },
+            "response": {
+                "200": {
+                    "description": "Successful response",
+                    "type": "object",
+                    "properties": {
+                        "statusCode": {
+                            "type": "number"
+                        },
+                        "message": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "default": {
+                    "description": "Default response",
+                    "type": "object",
+                    "properties": {
+                        "statusCode": {
+                            "type": "number"
+                        },
+                        "message": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
     "saveStudentSchema": {
         "schema": {
             "body": {
@@ -169,6 +213,56 @@
                         },
                         "message": {
                             "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "getStudentSchema": {
+        "schema": {
+            "parameters": [
+                {
+                    "schema": {
+                        "type": "integer"
+                    },
+                    "in": "path",
+                    "name": "id",
+                    "required": true
+                }
+            ],
+            "response": {
+                "200": {
+                    "description": "Successful response",
+                    "type": "object",
+                    "properties": {
+                        "statusCode": {
+                            "type": "number"
+                        },
+                        "message": {
+                            "type": "string"
+                        },
+                        "data": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "default": {
+                    "description": "Default response",
+                    "type": "object",
+                    "properties": {
+                        "statusCode": {
+                            "type": "number"
+                        },
+                        "message": {
+                            "type": "string"
+                        },
+                        "data": {
+                            "type": "array",
+                            "items": {}
                         }
                     }
                 }

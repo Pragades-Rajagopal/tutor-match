@@ -12,6 +12,7 @@ const { statusCode, user } = require('../config/constants');
 /** @param {import('fastify').FastifyInstance} app */
 module.exports = async (app) => {
     app.log.info('User plugin loaded');
+    const { db, sql } = app.platformatic;
 
     app.platformatic.addEntityHooks('user', {
         save: async (originalSave, options) => {
@@ -42,7 +43,7 @@ module.exports = async (app) => {
     const otpValidator = async (request, response) => {
         const { email, pin } = request.body;
         const result = await otpService.validateOTP(app, email, pin);
-        if (result.status === statusCode.success) {
+        if (result.statusCode === statusCode.success) {
             await otpService.updateVerificationStatus(app, email);
         }
         return result
@@ -58,7 +59,6 @@ module.exports = async (app) => {
      */
     const userLogin = async (request, response) => {
         const { email, password } = request.body;
-        const { db, sql } = app.platformatic;
         const currentTime = moment().utcOffset('+05:30').format('YYYY-MM-DD HH:mm:ss');
         const verify = await loginService.verifyPass(app, email, password);
         console.log(verify);
@@ -87,6 +87,24 @@ module.exports = async (app) => {
             message: "success",
             token: token
         }
+    }
+
+    /**
+     * Reset user password
+     * @param {*} request 
+     * @param {*} response 
+     * @returns {object} response
+     */
+    const resetPassword = async (request, response) => {
+        const { email, otp, password } = request.body;
+        const result = await otpService.validateOTP(app, email, otp);
+        console.log(result);
+        if (result.statusCode !== statusCode.success) {
+            return result;
+        }
+        const hashPass = await loginService.hashPass(app, password);
+        const res = await loginService.resetPassword(app, email, hashPass);
+        return res;
     }
 
     /**
@@ -128,6 +146,12 @@ module.exports = async (app) => {
         customSwagger.loginSchema,
         userLogin
     );
+
+    app.post(
+        '/reset-password',
+        customSwagger.resetPassword,
+        resetPassword
+    )
 
     app.post(
         '/resend-otp',

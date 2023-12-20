@@ -48,5 +48,33 @@ module.exports = {
             app.log.error(error);
             return false;
         }
+    },
+
+    /**
+     * (Reset Password) Updates password for the user
+     * @param {FastifyInstance} app 
+     * @param {string} email 
+     * @param {string} hashPass 
+     * @returns {object} response
+     */
+    resetPassword: async (app, email, hashPass) => {
+        try {
+            await app.platformatic.db.query(app.platformatic.sql`
+                UPDATE users 
+                SET password = ${hashPass}
+                WHERE email = ${email}
+            `);
+            app.log.info(loginService.resetPassword.success);
+            return {
+                statusCode: statusCode.success,
+                message: loginService.resetPassword.success
+            }
+        } catch (error) {
+            app.log.error(loginService.resetPassword.error);
+            return {
+                statusCode: statusCode.serverError,
+                message: loginService.resetPassword.error
+            }
+        }
     }
 }
