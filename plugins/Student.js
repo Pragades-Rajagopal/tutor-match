@@ -17,16 +17,15 @@ module.exports = async (app) => {
     const saveStudentInterest = async (request, response) => {
         try {
             const { studentId, courseIds } = request.body;
-            console.log(courseIds);
             const currentTime = moment().utcOffset('+05:30').format('YYYY-MM-DD HH:mm:ss');
             await db.query(sql`
-            DELETE FROM students WHERE student_id = ${studentId}
-        `);
+                DELETE FROM students WHERE student_id = ${studentId}
+            `);
             for (const i of courseIds) {
                 await db.query(sql`
-            INSERT INTO STUDENTS (student_id, course_id, _created_on, _modified_on)
-            VALUES (${studentId}, ${parseInt(i)}, ${currentTime}, ${currentTime})
-        `);
+                    INSERT INTO STUDENTS (student_id, course_id, _created_on, _modified_on)
+                    VALUES (${studentId}, ${parseInt(i)}, ${currentTime}, ${currentTime})
+                `);
             }
             app.log.info(student.interestAdded);
             return {
@@ -61,7 +60,7 @@ module.exports = async (app) => {
             return {
                 statusCode: statusCode.notFound,
                 message: student.interestNotFound,
-                data: []
+                data: {}
             }
         }
         let values = [];
@@ -71,10 +70,35 @@ module.exports = async (app) => {
         return {
             statusCode: statusCode.success,
             message: student.getInterest,
-            data: values,
+            data: {
+                interests: values
+            },
         }
     };
 
+
+    const getTutorList = async (request, response) => {
+        const student_id = request.params.student_id;
+        const clause = await db.query(sql`
+            SELECT
+                'course_id LIKE ''%' || REPLACE (GROUP_CONCAT(s.course_id),
+                ',',
+                '%'' OR course_id LIKE ''%') || '%''' as where_condition
+            from
+                students s
+            where
+                s.student_id = ${student_id}
+        `);
+        console.log(clause[0]["where_condition"]);
+        // fix required!!!
+        const tutorLists = await db.query(sql`
+            SELECT * FROM tutor_list_vw
+            WHERE ${clause[0]["where_condition"]}
+        `);
+        return {
+            data: tutorLists
+        }
+    }
 
     /**
      * Custom Student routes
@@ -89,5 +113,10 @@ module.exports = async (app) => {
         '/student-interest/:id',
         customSwagger.getStudentSchema,
         getStudentInterests
+    );
+
+    app.get(
+        '/student/tutor-list/:student_id',
+        getTutorList
     );
 }
