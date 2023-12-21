@@ -15,7 +15,9 @@
         "otp": true,
         "userLogin": true,
         "students": true,
-        "courses": true
+        "courses": true,
+        "tutors": true,
+        "tutorRequests": true
       }
     }
   },

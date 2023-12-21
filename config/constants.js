@@ -47,5 +47,11 @@ module.exports = {
         addInterestError: 'Error while adding interests for the student',
         interestNotFound: 'Interests not found for the student',
         getInterest: 'Interests found'
+    },
+    tutor: {
+        profileAdded: 'Profile added',
+        addInterestError: 'Error while adding profile for the tutor',
+        interestNotFound: 'Interests not found for the tutor',
+        getInterest: 'Interests found'
     }
 }

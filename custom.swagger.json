@@ -243,9 +243,125 @@
                             "type": "string"
                         },
                         "data": {
+                            "type": "object",
+                            "properties": {
+                                "interests": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "default": {
+                    "description": "Default response",
+                    "type": "object",
+                    "properties": {
+                        "statusCode": {
+                            "type": "number"
+                        },
+                        "message": {
+                            "type": "string"
+                        },
+                        "data": {
                             "type": "array",
-                            "items": {
-                                "type": "string"
+                            "items": {}
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "saveTutorProfileSchema": {
+        "schema": {
+            "body": {
+                "type": "object",
+                "properties": {
+                    "tutorId": {
+                        "type": "number"
+                    },
+                    "courseIds": {
+                        "type": "array",
+                        "items": {
+                            "type": "number"
+                        }
+                    },
+                    "bio": {
+                        "type": "string"
+                    },
+                    "websites": {
+                        "type": "string"
+                    }
+                }
+            },
+            "response": {
+                "201": {
+                    "description": "Successful response",
+                    "type": "object",
+                    "properties": {
+                        "statusCode": {
+                            "type": "number"
+                        },
+                        "message": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "default": {
+                    "description": "Default response",
+                    "type": "object",
+                    "properties": {
+                        "statusCode": {
+                            "type": "number"
+                        },
+                        "message": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "getTutorProfileSchema": {
+        "schema": {
+            "parameters": [
+                {
+                    "schema": {
+                        "type": "integer"
+                    },
+                    "in": "path",
+                    "name": "id",
+                    "required": true
+                }
+            ],
+            "response": {
+                "200": {
+                    "description": "Successful response",
+                    "type": "object",
+                    "properties": {
+                        "statusCode": {
+                            "type": "number"
+                        },
+                        "message": {
+                            "type": "string"
+                        },
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "interests": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                },
+                                "bio": {
+                                    "type": "string"
+                                },
+                                "websites": {
+                                    "type": "string"
+                                }
                             }
                         }
                     }
