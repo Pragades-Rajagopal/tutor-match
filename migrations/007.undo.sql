@@ -1,1 +1,0 @@
-DROP VIEW tutor_list_vw;

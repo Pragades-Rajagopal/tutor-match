@@ -45,12 +45,16 @@ module.exports = {
     student: {
         interestAdded: 'Interests added',
         addInterestError: 'Error while adding interests for the student',
+        addIntrstCheckError: 'Either the user is not a student or not yet activated as student',
         interestNotFound: 'Interests not found for the student',
-        getInterest: 'Interests found'
+        getInterest: 'Interests found',
+        fetchTutorListSuccess: 'Tutor list based on student interest',
+        fetchTutorListError: 'Error while fetching tutor list'
     },
     tutor: {
         profileAdded: 'Profile added',
         addInterestError: 'Error while adding profile for the tutor',
+        addIntrstCheckError: 'Either the user is not a tutor or not yet activated as tutor',
         interestNotFound: 'Interests not found for the tutor',
         getInterest: 'Interests found'
     }

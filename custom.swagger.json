@@ -384,5 +384,80 @@
                 }
             }
         }
+    },
+    "getTutorListSchema": {
+        "schema": {
+            "parameters": [
+                {
+                    "schema": {
+                        "type": "integer"
+                    },
+                    "in": "path",
+                    "name": "id",
+                    "required": true
+                }
+            ],
+            "response": {
+                "200": {
+                    "description": "Successful response",
+                    "type": "object",
+                    "properties": {
+                        "statusCode": {
+                            "type": "number"
+                        },
+                        "message": {
+                            "type": "string"
+                        },
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "tutorLists": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "tutor_id": {
+                                                "type": "integer"
+                                            },
+                                            "tutor_name": {
+                                                "type": "string"
+                                            },
+                                            "bio": {
+                                                "type": "string"
+                                            },
+                                            "websites": {
+                                                "type": "string"
+                                            },
+                                            "courses": {
+                                                "type": "string"
+                                            },
+                                            "student_id": {
+                                                "type": "integer"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "default": {
+                    "description": "Default response",
+                    "type": "object",
+                    "properties": {
+                        "statusCode": {
+                            "type": "number"
+                        },
+                        "message": {
+                            "type": "string"
+                        },
+                        "data": {
+                            "type": "object",
+                            "properties": {}
+                        }
+                    }
+                }
+            }
+        }
     }
 }

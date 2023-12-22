@@ -18,6 +18,19 @@ module.exports = async (app) => {
         try {
             const { studentId, courseIds } = request.body;
             const currentTime = moment().utcOffset('+05:30').format('YYYY-MM-DD HH:mm:ss');
+            const isStudent = await db.query(sql`
+                SELECT 1 "check" FROM users
+                WHERE id = ${studentId}
+                AND _type = 'student'
+                AND _status = 1
+            `);
+            console.log(isStudent);
+            if (isStudent && isStudent.length === 0) {
+                return {
+                    statusCode: statusCode.error,
+                    message: student.addIntrstCheckError
+                }
+            }
             await db.query(sql`
                 DELETE FROM students WHERE student_id = ${studentId}
             `);
@@ -33,7 +46,8 @@ module.exports = async (app) => {
                 message: student.interestAdded
             }
         } catch (error) {
-            app.log.info(student.addInterestError);
+            app.log.error(student.addInterestError);
+            app.log.error(error);
             return {
                 statusCode: statusCode.serverError,
                 message: student.addInterestError
@@ -76,27 +90,31 @@ module.exports = async (app) => {
         }
     };
 
-
+    /**
+     * Retrive tutor list based on student's interests
+     * @param {*} request 
+     * @param {*} response 
+     * @returns {object}
+     */
     const getTutorList = async (request, response) => {
-        const student_id = request.params.student_id;
-        const clause = await db.query(sql`
-            SELECT
-                'course_id LIKE ''%' || REPLACE (GROUP_CONCAT(s.course_id),
-                ',',
-                '%'' OR course_id LIKE ''%') || '%''' as where_condition
-            from
-                students s
-            where
-                s.student_id = ${student_id}
-        `);
-        console.log(clause[0]["where_condition"]);
-        // fix required!!!
-        const tutorLists = await db.query(sql`
-            SELECT * FROM tutor_list_vw
-            WHERE ${clause[0]["where_condition"]}
-        `);
-        return {
-            data: tutorLists
+        try {
+            const student_id = request.params.student_id;
+            const tutorLists = await db.query(getTutorListQuery(sql, student_id));
+            return {
+                statusCode: statusCode.success,
+                message: student.fetchTutorListSuccess,
+                data: {
+                    tutorLists: tutorLists
+                }
+            }
+        } catch (error) {
+            app.log.error(student.fetchTutorListError);
+            app.log.error(error);
+            return {
+                statusCode: statusCode.serverError,
+                message: student.fetchTutorListError,
+                data: {}
+            }
         }
     }
 
@@ -117,6 +135,48 @@ module.exports = async (app) => {
 
     app.get(
         '/student/tutor-list/:student_id',
+        customSwagger.getTutorListSchema,
         getTutorList
     );
 }
+
+/**
+ * Frames query to retrive tutor list based on student's interests
+ * @param {app.platformatic.sql} sql 
+ * @param {*} student_id 
+ * @returns 
+ */
+const getTutorListQuery = (sql, student_id) => {
+    return sql`
+        SELECT
+            DISTINCT T.TUTOR_ID,
+            U.FIRST_NAME || ' ' || U.LAST_NAME AS tutor_name,
+            T.BIO ,
+            T.WEBSITES,
+            (
+            SELECT
+                GROUP_CONCAT(C1.NAME,
+                ', ')
+            FROM
+                COURSES C1
+            WHERE
+                C1.ID IN (
+                SELECT
+                    T1.COURSE_ID
+                FROM
+                    TUTORS T1
+                WHERE
+                    T1.TUTOR_ID = T.TUTOR_ID)) AS courses,
+                    s.student_id
+        FROM
+            TUTORS T,
+            USERS U,
+            COURSES C,
+            students s
+        WHERE
+            U.ID = T.TUTOR_ID
+            AND C.ID = T.COURSE_ID
+            AND S.student_id = ${student_id}
+            and t.course_id = s.course_id
+    `
+};

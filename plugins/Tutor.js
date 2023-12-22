@@ -18,6 +18,18 @@ module.exports = async (app) => {
         try {
             const { tutorId, courseIds, bio, websites } = request.body;
             const currentTime = moment().utcOffset('+05:30').format('YYYY-MM-DD HH:mm:ss');
+            const isTutor = await db.query(sql`
+                SELECT 1 "check" FROM users
+                WHERE id = ${tutorId}
+                AND _type = 'tutor'
+                AND _status = 1
+            `);
+            if (isTutor && isTutor.length === 0) {
+                return {
+                    statusCode: statusCode.error,
+                    message: tutor.addIntrstCheckError
+                }
+            }
             await db.query(sql`
                 DELETE FROM tutors WHERE tutor_id = ${tutorId}
             `);
@@ -33,8 +45,8 @@ module.exports = async (app) => {
                 message: tutor.profileAdded
             }
         } catch (error) {
-            app.log.info(tutor.addInterestError);
-            console.log(error);
+            app.log.error(tutor.addInterestError);
+            app.log.error(error);
             return {
                 statusCode: statusCode.serverError,
                 message: tutor.addInterestError
