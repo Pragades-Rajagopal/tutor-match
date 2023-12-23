@@ -4,6 +4,7 @@
 const moment = require('moment');
 const customSwagger = require('../custom.swagger.json');
 const { student, statusCode } = require('../config/constants');
+const mailService = require('../services/mailService');
 
 /** @param {import('fastify').FastifyInstance} app */
 module.exports = async (app) => {
@@ -64,7 +65,7 @@ module.exports = async (app) => {
     const getStudentInterests = async (request, response) => {
         const id = request.params.id;
         const data = await db.query(sql`
-            SELECT c.name 
+            SELECT c.id, c.name 
             FROM students s, courses c
             WHERE s.student_id = ${id} 
             AND c.id = s.course_id
@@ -79,7 +80,10 @@ module.exports = async (app) => {
         }
         let values = [];
         for (const i of data) {
-            values.push(i.name);
+            values.push({
+                courseId: i.id,
+                courseName: i.name
+            });
         }
         return {
             statusCode: statusCode.success,
@@ -119,6 +123,67 @@ module.exports = async (app) => {
     }
 
     /**
+     * Sends request to Tutors 
+     * @param {*} request 
+     * @param {*} response 
+     * @returns {object} response
+     */
+    const sendRequest = async (request, response) => {
+        try {
+            const currentTime = moment().utcOffset('+05:30').format('YYYY-MM-DD HH:mm:ss');
+            const { studentId, tutorId } = request.body;
+            const studentInfo = await db.query(sql`
+                SELECT * FROM student_info_vw WHERE ID = ${studentId}
+            `);
+            const tutorInfo = await db.query(sql`
+                SELECT * FROM tutor_info_vw WHERE ID = ${tutorId}
+            `);
+            if ((studentInfo && studentInfo.length === 0) || (tutorInfo && tutorInfo.length === 0)) {
+                return {
+                    statusCode: statusCode.error,
+                    message: student.infoNotFound
+                }
+            }
+            const isRequestExists = await db.query(sql`
+                SELECT 1 "check" FROM tutor_requests
+                WHERE tutor_id = ${tutorId}
+                AND student_id = ${studentId}
+            `);
+            if (isRequestExists && isRequestExists.length > 0) {
+                return {
+                    statusCode: statusCode.error,
+                    message: student.requestExists
+                }
+            }
+            const tutorInfo_ = tutorInfo[0];
+            const studentInfo_ = studentInfo[0];
+            if (tutorInfo_.mail_subscription === 1) {
+                await mailService.sendTutorRequest(app, tutorInfo_.email, {
+                    name: studentInfo_.name,
+                    interests: studentInfo_.interests,
+                    mail: studentInfo_.email
+                });
+            }
+            await db.query(sql`
+                INSERT INTO tutor_requests (tutor_id, student_id, _created_on) 
+                VALUES (${tutorId}, ${studentId}, ${currentTime})
+            `);
+            app.log.info(student.sendRequestSuccess);
+            return {
+                statusCode: statusCode.success,
+                message: student.sendRequestSuccess
+            }
+        } catch (error) {
+            app.log.error(student.sendRequestError);
+            app.log.error(error);
+            return {
+                statusCode: statusCode.serverError,
+                message: student.sendRequestError
+            }
+        }
+    }
+
+    /**
      * Custom Student routes
      */
     app.post(
@@ -138,6 +203,12 @@ module.exports = async (app) => {
         customSwagger.getTutorListSchema,
         getTutorList
     );
+
+    app.post(
+        '/student/request',
+        customSwagger.sendRequestToTutorSchema,
+        sendRequest
+    )
 }
 
 /**

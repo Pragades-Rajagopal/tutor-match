@@ -25,7 +25,7 @@ module.exports = async (app) => {
             const result = await originalSave(options);
             if (result) {
                 const result = await otpService.generateOTP(app, email);
-                await mailService.sendEmail(app, email, result);
+                await mailService.sendRegistrationEmail(app, email, result);
             }
             app.log.info(result);
             return result;
@@ -117,7 +117,7 @@ module.exports = async (app) => {
         try {
             const email = request.body.email;
             const result = await otpService.generateOTP(app, email);
-            await mailService.sendEmail(app, email, result);
+            await mailService.sendRegistrationEmail(app, email, result);
             return {
                 statusCode: 200,
                 message: 'OTP sent to your registered email address',

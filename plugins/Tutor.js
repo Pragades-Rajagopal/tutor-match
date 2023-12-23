@@ -16,7 +16,7 @@ module.exports = async (app) => {
      */
     const saveTutorProfile = async (request, response) => {
         try {
-            const { tutorId, courseIds, bio, websites } = request.body;
+            const { tutorId, courseIds, bio, websites, mailSubscription } = request.body;
             const currentTime = moment().utcOffset('+05:30').format('YYYY-MM-DD HH:mm:ss');
             const isTutor = await db.query(sql`
                 SELECT 1 "check" FROM users
@@ -35,8 +35,8 @@ module.exports = async (app) => {
             `);
             for (const i of courseIds) {
                 await db.query(sql`
-                    INSERT INTO tutors (tutor_id, course_id, bio, websites, _created_on, _modified_on)
-                    VALUES (${tutorId}, ${parseInt(i)}, ${bio}, ${websites}, ${currentTime}, ${currentTime})
+                    INSERT INTO tutors (tutor_id, course_id, bio, websites, mail_subscription, _created_on, _modified_on)
+                    VALUES (${tutorId}, ${parseInt(i)}, ${bio}, ${websites}, ${mailSubscription}, ${currentTime}, ${currentTime})
                 `);
             }
             app.log.info(tutor.profileAdded);
@@ -63,14 +63,14 @@ module.exports = async (app) => {
     const getTutorProfile = async (request, response) => {
         const id = request.params.id;
         const data = await db.query(sql`
-            SELECT c.name 
+            SELECT c.id, c.name 
             FROM tutors t, courses c
             WHERE t.tutor_id = ${id} 
             AND c.id = t.course_id
             AND c._status = 1
         `);
         const bio = await db.query(sql`
-            SELECT t.bio, t.websites
+            SELECT t.bio, t.websites, t.mail_subscription
             FROM tutors t
             WHERE t.tutor_id = ${id} 
             LIMIT 1
@@ -84,7 +84,10 @@ module.exports = async (app) => {
         }
         let values = [];
         for (const i of data) {
-            values.push(i.name);
+            values.push({
+                courseId: i.id,
+                courseName: i.name
+            });
         }
         return {
             statusCode: statusCode.success,
@@ -92,7 +95,8 @@ module.exports = async (app) => {
             data: {
                 interests: values,
                 bio: bio[0]["bio"],
-                websites: bio[0]["websites"]
+                websites: bio[0]["websites"],
+                mailSubscription: bio[0]["mail_subscription"]
             },
         }
     };

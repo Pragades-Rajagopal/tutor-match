@@ -9,12 +9,17 @@ module.exports = {
         verified: 'Status updated after email verification',
         verifyError: 'Error while updating status after email verification'
     },
+    emailTemplates: {
+        otp: 'otp',
+        tutorRequest: 'tutor-request',
+    },
     email: {
         verificationSubject: 'Tutoree - Email verification',
         messages: {
             sent: 'Email triggered successfully',
             triggerError: 'Error occured while triggering the email'
-        }
+        },
+        studentRequest: 'Tutoree - Student Request'
     },
     statusCode: {
         success: 200,
@@ -49,7 +54,11 @@ module.exports = {
         interestNotFound: 'Interests not found for the student',
         getInterest: 'Interests found',
         fetchTutorListSuccess: 'Tutor list based on student interest',
-        fetchTutorListError: 'Error while fetching tutor list'
+        fetchTutorListError: 'Error while fetching tutor list',
+        infoNotFound: 'Either Student or Tutor information not found',
+        sendRequestError: 'Unable to send request at this moment',
+        sendRequestSuccess: 'Request sent successfully',
+        requestExists: 'Request has already been sent'
     },
     tutor: {
         profileAdded: 'Profile added',

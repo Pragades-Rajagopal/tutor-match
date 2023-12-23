@@ -248,7 +248,15 @@
                                 "interests": {
                                     "type": "array",
                                     "items": {
-                                        "type": "string"
+                                        "type": "object",
+                                        "properties": {
+                                            "courseId": {
+                                                "type": "integer"
+                                            },
+                                            "courseName": {
+                                                "type": "string"
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -293,6 +301,9 @@
                     },
                     "websites": {
                         "type": "string"
+                    },
+                    "mailSubscription": {
+                        "type": "number"
                     }
                 }
             },
@@ -353,7 +364,15 @@
                                 "interests": {
                                     "type": "array",
                                     "items": {
-                                        "type": "string"
+                                        "type": "object",
+                                        "properties": {
+                                            "courseId": {
+                                                "type": "integer"
+                                            },
+                                            "courseName": {
+                                                "type": "string"
+                                            }
+                                        }
                                     }
                                 },
                                 "bio": {
@@ -361,6 +380,9 @@
                                 },
                                 "websites": {
                                     "type": "string"
+                                },
+                                "mailSubscription": {
+                                    "type": "number"
                                 }
                             }
                         }
@@ -454,6 +476,47 @@
                         "data": {
                             "type": "object",
                             "properties": {}
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "sendRequestToTutorSchema": {
+        "schema": {
+            "body": {
+                "type": "object",
+                "properties": {
+                    "tutorId": {
+                        "type": "number"
+                    },
+                    "studentId": {
+                        "type": "number"
+                    }
+                }
+            },
+            "response": {
+                "200": {
+                    "description": "Successful response",
+                    "type": "object",
+                    "properties": {
+                        "statusCode": {
+                            "type": "number"
+                        },
+                        "message": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "default": {
+                    "description": "Default response",
+                    "type": "object",
+                    "properties": {
+                        "statusCode": {
+                            "type": "number"
+                        },
+                        "message": {
+                            "type": "string"
                         }
                     }
                 }
