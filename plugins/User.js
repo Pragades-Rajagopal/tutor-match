@@ -7,7 +7,7 @@ const otpService = require('../services/otpService');
 const loginService = require('../services/loginService');
 const middleware = require('../services/middlewareService');
 const customSwagger = require('../custom.swagger.json');
-const { statusCode, user } = require('../config/constants');
+const { statusCode, user, emailType } = require('../config/constants');
 
 /** @param {import('fastify').FastifyInstance} app */
 module.exports = async (app) => {
@@ -19,13 +19,16 @@ module.exports = async (app) => {
             const currentTime = moment().utcOffset('+05:30').format('YYYY-MM-DD HH:mm:ss');
             options.input.createdOn = currentTime;
             options.input.modifiedOn = currentTime;
+            options.input.isEmailVerified = 0;
+            options.input.isMobileVerified = 0;
+            options.input.status = 0;
             const email = options.input.email;
             // Hashing the password
             options.input.password = await loginService.hashPass(app, options.input.password);
             const result = await originalSave(options);
             if (result) {
-                const result = await otpService.generateOTP(app, email);
-                await mailService.sendRegistrationEmail(app, email, result);
+                const result = await otpService.generateOTP(app, email, currentTime);
+                await mailService.sendRegistrationOTPEmail(app, email, result, emailType.register);
             }
             app.log.info(result);
             return result;
@@ -61,7 +64,6 @@ module.exports = async (app) => {
         const { email, password } = request.body;
         const currentTime = moment().utcOffset('+05:30').format('YYYY-MM-DD HH:mm:ss');
         const verify = await loginService.verifyPass(app, email, password);
-        console.log(verify);
         if (verify === statusCode.notFound) {
             return {
                 statusCode: statusCode.notFound,
@@ -75,8 +77,16 @@ module.exports = async (app) => {
                 token: ""
             }
         }
+        const data = await db.query(sql`
+            SELECT first_name || ' ' || last_name AS username,
+            email,
+            id
+            FROM users
+            WHERE email = ${email}
+            AND _status = 1
+        `);
         // Generates JWT and saves in database
-        const token = middleware.generateToken(email);
+        const token = middleware.generateToken(data[0]);
         await db.query(sql`
             DELETE FROM user_login WHERE email = ${email};
             INSERT INTO user_login (email, token, created_on)
@@ -115,9 +125,10 @@ module.exports = async (app) => {
      */
     const resendOTP = async (request, response) => {
         try {
+            const currentTime = moment().utcOffset('+05:30').format('YYYY-MM-DD HH:mm:ss');
             const email = request.body.email;
-            const result = await otpService.generateOTP(app, email);
-            await mailService.sendRegistrationEmail(app, email, result);
+            const result = await otpService.generateOTP(app, email, currentTime);
+            await mailService.sendRegistrationOTPEmail(app, email, result, emailType.resendOtp);
             return {
                 statusCode: 200,
                 message: 'OTP sent to your registered email address',

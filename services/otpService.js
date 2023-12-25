@@ -4,15 +4,16 @@ module.exports = {
      * Generates OTP and inserts into OTP table
      * @param {FastifyInstance} app 
      * @param {string} email 
+     * @param {time} createdOn
      * @returns {string} generated OTP
      */
-    generateOTP: async (app, email) => {
+    generateOTP: async (app, email, createdOn) => {
         try {
             const { db, sql } = app.platformatic;
             const pin = generatePin();
             await db.query(sql`
-                insert into otp (email, pin)
-                values (${email}, ${pin})
+                insert into otp (email, pin, created_on)
+                values (${email}, ${pin}, ${createdOn})
             `);
             app.log.info(otpMessages.generated);
             return pin;

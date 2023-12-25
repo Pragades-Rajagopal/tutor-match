@@ -22,14 +22,17 @@ module.exports = {
      * @param {FastifyInstance} app 
      * @param {string} email 
      * @param {string} pin
+     * @param {string} type
      */
-    sendRegistrationEmail: async (app, email, pin) => {
+    sendRegistrationOTPEmail: async (app, email, pin, type) => {
         try {
+            const subject = type === constants.emailType.register
+                ? constants.email.verificationSubject : constants.email.resentOTPsubject;
             const finalTemplate = getTemplate(constants.emailTemplates.otp, { email: email, pin: pin });
             const info = await transporter.sendMail({
                 from: process.env.TUTOR_MAIL,
                 to: email,
-                subject: constants.email.verificationSubject,
+                subject: subject,
                 html: finalTemplate,
             });
             app.log.info(constants.email.messages.sent);

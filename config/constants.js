@@ -15,18 +15,28 @@ module.exports = {
     },
     email: {
         verificationSubject: 'Tutoree - Email verification',
+        resentOTPsubject: 'Tutoree - OTP request',
         messages: {
             sent: 'Email triggered successfully',
             triggerError: 'Error occured while triggering the email'
         },
         studentRequest: 'Tutoree - Student Request'
     },
+    emailType: {
+        register: 'register',
+        resendOtp: 'otp'
+    },
     statusCode: {
         success: 200,
         error: 400,
         unauthorized: 401,
+        forbidden: 403,
         notFound: 404,
         serverError: 500
+    },
+    authenticationMessage: {
+        tokenMissing: 'Please send auth token in request header',
+        invalidToken: 'Invalid token! Cannot authenticate at this moment'
     },
     loginService: {
         hash: {
@@ -65,6 +75,8 @@ module.exports = {
         addInterestError: 'Error while adding profile for the tutor',
         addIntrstCheckError: 'Either the user is not a tutor or not yet activated as tutor',
         interestNotFound: 'Interests not found for the tutor',
-        getInterest: 'Interests found'
+        getInterest: 'Interests found',
+        requestsNotFound: 'Requests not available for this tutor',
+        requestsFound: 'Requests for the tutor'
     }
 }

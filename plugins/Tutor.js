@@ -102,18 +102,43 @@ module.exports = async (app) => {
     };
 
 
+    const getRequestInfo = async (request, response) => {
+        const tutorId = request.params.id;
+        const data = await db.query(sql`
+            SELECT * FROM tutor_view_requests_vw 
+            WHERE tutor_id = ${tutorId}
+        `);
+        if (data && data.length === 0) {
+            return {
+                statusCode: statusCode.notFound,
+                message: tutor.requestsNotFound,
+                data: {}
+            }
+        }
+        return {
+            statusCode: statusCode.success,
+            message: tutor.requestsFound,
+            data: data
+        }
+    };
+
     /**
      * Custom Student routes
      */
     app.post(
-        '/tutor-profile',
+        '/tutor/profile',
         customSwagger.saveTutorProfileSchema,
         saveTutorProfile
     );
 
     app.get(
-        '/tutor-profile/:id',
+        '/tutor/profile/:id',
         customSwagger.getTutorProfileSchema,
         getTutorProfile
     );
+
+    app.get(
+        '/tutor/request/:id',
+        getRequestInfo
+    )
 }

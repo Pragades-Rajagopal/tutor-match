@@ -5,6 +5,7 @@ const moment = require('moment');
 const customSwagger = require('../custom.swagger.json');
 const { student, statusCode } = require('../config/constants');
 const mailService = require('../services/mailService');
+const { authenticateToken } = require('../services/middlewareService');
 
 /** @param {import('fastify').FastifyInstance} app */
 module.exports = async (app) => {
@@ -186,14 +187,16 @@ module.exports = async (app) => {
     /**
      * Custom Student routes
      */
+
+    // app.addHook("preValidation", authenticateToken);
     app.post(
-        '/student-interest',
+        '/student/interest',
         customSwagger.saveStudentSchema,
         saveStudentInterest
     );
 
     app.get(
-        '/student-interest/:id',
+        '/student/interest/:id',
         customSwagger.getStudentSchema,
         getStudentInterests
     );
