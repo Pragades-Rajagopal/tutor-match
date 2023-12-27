@@ -192,7 +192,7 @@
                 }
             },
             "response": {
-                "201": {
+                "200": {
                     "description": "Successful response",
                     "type": "object",
                     "properties": {
@@ -308,7 +308,7 @@
                 }
             },
             "response": {
-                "201": {
+                "200": {
                     "description": "Successful response",
                     "type": "object",
                     "properties": {
@@ -491,6 +491,50 @@
                         "type": "number"
                     },
                     "studentId": {
+                        "type": "number"
+                    }
+                }
+            },
+            "response": {
+                "200": {
+                    "description": "Successful response",
+                    "type": "object",
+                    "properties": {
+                        "statusCode": {
+                            "type": "number"
+                        },
+                        "message": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "default": {
+                    "description": "Default response",
+                    "type": "object",
+                    "properties": {
+                        "statusCode": {
+                            "type": "number"
+                        },
+                        "message": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "saveFeedSchema": {
+        "schema": {
+            "body": {
+                "type": "object",
+                "properties": {
+                    "content": {
+                        "type": "string"
+                    },
+                    "createdBy": {
+                        "type": "string"
+                    },
+                    "createdById": {
                         "type": "number"
                     }
                 }

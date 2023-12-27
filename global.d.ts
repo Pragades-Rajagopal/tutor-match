@@ -1,10 +1,10 @@
 /// <reference types="@platformatic/db" />
 import { EntityHooks } from '@platformatic/sql-mapper'
-import { EntityTypes, Course, Otp, Student, Tutor, TutorRequest, User, UserLogin } from './types'
+import { EntityTypes, Course, Feed, Otp, Student, Tutor, TutorRequest, User, UserLogin } from './types'
 
 declare module 'fastify' {
   interface FastifyInstance {
-    getSchema<T extends 'Course' | 'Otp' | 'Student' | 'Tutor' | 'TutorRequest' | 'User' | 'UserLogin'>(schemaId: T): {
+    getSchema<T extends 'Course' | 'Feed' | 'Otp' | 'Student' | 'Tutor' | 'TutorRequest' | 'User' | 'UserLogin'>(schemaId: T): {
       '$id': string,
       title: string,
       description: string,
@@ -20,6 +20,7 @@ declare module 'fastify' {
 declare module '@platformatic/sql-mapper' {
   interface Entities {
     course: Entity<Course>,
+    feed: Entity<Feed>,
     otp: Entity<Otp>,
     student: Entity<Student>,
     tutor: Entity<Tutor>,
@@ -32,6 +33,7 @@ declare module '@platformatic/sql-mapper' {
 declare module '@platformatic/types' {
   interface PlatformaticApp {
     addEntityHooks(entityName: 'course', hooks: EntityHooks<Course>): any
+    addEntityHooks(entityName: 'feed', hooks: EntityHooks<Feed>): any
     addEntityHooks(entityName: 'otp', hooks: EntityHooks<Otp>): any
     addEntityHooks(entityName: 'student', hooks: EntityHooks<Student>): any
     addEntityHooks(entityName: 'tutor', hooks: EntityHooks<Tutor>): any

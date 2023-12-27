@@ -11,13 +11,15 @@
     "connectionString": "{DATABASE_URL}",
     "graphql": true,
     "openapi": {
+      "prefix": "api",
       "ignore": {
         "otp": true,
         "userLogin": true,
         "students": true,
         "courses": true,
         "tutors": true,
-        "tutorRequests": true
+        "tutorRequests": true,
+        "feeds": true
       }
     }
   },
