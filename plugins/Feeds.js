@@ -76,17 +76,50 @@ module.exports = async (app) => {
     };
 
     /**
+     * Delete a feed
+     * @param {*} request 
+     * @param {*} response 
+     * @returns {object} response
+     */
+    const deleteFeed = async (request, response) => {
+        try {
+            const id = request.params.id;
+            await db.query(sql`
+            DELETE FROM feeds WHERE id = ${id}
+        `);
+            return {
+                statusCode: statusCode.success,
+                message: feeds.deleteFeed,
+            }
+        } catch (error) {
+            app.log.error(feeds.deleteFeedError);
+            app.log.error(error);
+            return {
+                statusCode: statusCode.serverError,
+                message: feeds.deleteFeedError,
+            }
+        }
+    };
+
+    /**
      * Custom feeds routes
      */
 
     app.post(
-        '/feed',
+        '/api/feed',
         customSwagger.saveFeedSchema,
         saveFeed
     )
 
     app.get(
-        '/feed',
+        '/api/feed',
+        customSwagger.getFeedsSchema,
         getFeeds
+    )
+
+    app.delete(
+        '/api/feed/:id',
+        customSwagger.deleteFeedSchema,
+        deleteFeed
     )
 }

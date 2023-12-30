@@ -80,7 +80,8 @@ module.exports = async (app) => {
         const data = await db.query(sql`
             SELECT first_name || ' ' || last_name AS username,
             email,
-            id
+            id,
+            _type
             FROM users
             WHERE email = ${email}
             AND _status = 1
@@ -135,6 +136,7 @@ module.exports = async (app) => {
                 error: null
             };
         } catch (error) {
+            app.log.error(error);
             return {
                 statusCode: 200,
                 message: null,
@@ -144,29 +146,70 @@ module.exports = async (app) => {
     }
 
     /**
+     * Verifies user login and logs out
+     * @param {*} request 
+     * @param {*} response 
+     * @returns {object} response
+     */
+    const userLogout = async (request, response) => {
+        try {
+            const email = request.body.email;
+            const data = await db.query(sql`
+            SELECT * FROM user_login WHERE email = ${email}
+        `);
+            if (data && data.length === 0) {
+                return {
+                    statusCode: statusCode.error,
+                    message: user.userLoginNotFound
+                }
+            }
+            await db.query(sql`
+            DELETE FROM user_login WHERE email = ${email}
+        `);
+            return {
+                statusCode: statusCode.success,
+                message: user.userlogoutSuccess
+            }
+        } catch (error) {
+            app.log.error(user.userlogoutError);
+            app.log.error(error);
+            return {
+                statusCode: statusCode.serverError,
+                message: user.userlogoutError
+            }
+        }
+    }
+
+    /**
      * Custom User routes
      */
     app.post(
-        '/validate-otp',
+        '/api/validate-otp',
         customSwagger.validateOTPSchema,
         otpValidator
     );
 
     app.post(
-        '/login',
+        '/api/login',
         customSwagger.loginSchema,
         userLogin
     );
 
     app.post(
-        '/reset-password',
+        '/api/reset-password',
         customSwagger.resetPassword,
         resetPassword
     )
 
     app.post(
-        '/resend-otp',
+        '/api/resend-otp',
         customSwagger.resendOTPSchema,
         resendOTP
+    );
+
+    app.post(
+        '/api/logout',
+        customSwagger.logoutSchema,
+        userLogout
     );
 }

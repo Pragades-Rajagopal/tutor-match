@@ -131,6 +131,44 @@
             }
         }
     },
+    "logoutSchema": {
+        "schema": {
+            "body": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string"
+                    }
+                }
+            },
+            "response": {
+                "200": {
+                    "description": "Successful response",
+                    "type": "object",
+                    "properties": {
+                        "statusCode": {
+                            "type": "number"
+                        },
+                        "message": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "default": {
+                    "description": "Default response",
+                    "type": "object",
+                    "properties": {
+                        "statusCode": {
+                            "type": "number"
+                        },
+                        "message": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
     "resetPassword": {
         "schema": {
             "body": {
@@ -245,6 +283,21 @@
                         "data": {
                             "type": "object",
                             "properties": {
+                                "student_id": {
+                                    "type": "number"
+                                },
+                                "name": {
+                                    "type": "string"
+                                },
+                                "email": {
+                                    "type": "string"
+                                },
+                                "mobile_number": {
+                                    "type": "number"
+                                },
+                                "type": {
+                                    "type": "string"
+                                },
                                 "interests": {
                                     "type": "array",
                                     "items": {
@@ -254,6 +307,29 @@
                                                 "type": "integer"
                                             },
                                             "courseName": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                },
+                                "feeds": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer"
+                                            },
+                                            "content": {
+                                                "type": "string"
+                                            },
+                                            "created_by": {
+                                                "type": "string"
+                                            },
+                                            "created_by_id": {
+                                                "type": "integer"
+                                            },
+                                            "created_on": {
                                                 "type": "string"
                                             }
                                         }
@@ -361,6 +437,30 @@
                         "data": {
                             "type": "object",
                             "properties": {
+                                "tutor_id": {
+                                    "type": "number"
+                                },
+                                "name": {
+                                    "type": "string"
+                                },
+                                "email": {
+                                    "type": "string"
+                                },
+                                "mobile_number": {
+                                    "type": "number"
+                                },
+                                "type": {
+                                    "type": "string"
+                                },
+                                "bio": {
+                                    "type": "string"
+                                },
+                                "websites": {
+                                    "type": "string"
+                                },
+                                "mailSubscription": {
+                                    "type": "number"
+                                },
                                 "interests": {
                                     "type": "array",
                                     "items": {
@@ -375,14 +475,28 @@
                                         }
                                     }
                                 },
-                                "bio": {
-                                    "type": "string"
-                                },
-                                "websites": {
-                                    "type": "string"
-                                },
-                                "mailSubscription": {
-                                    "type": "number"
+                                "feeds": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer"
+                                            },
+                                            "content": {
+                                                "type": "string"
+                                            },
+                                            "created_by": {
+                                                "type": "string"
+                                            },
+                                            "created_by_id": {
+                                                "type": "integer"
+                                            },
+                                            "created_on": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -554,6 +668,75 @@
                 },
                 "default": {
                     "description": "Default response",
+                    "type": "object",
+                    "properties": {
+                        "statusCode": {
+                            "type": "number"
+                        },
+                        "message": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "getFeedsSchema": {
+        "schema": {
+            "response": {
+                "200": {
+                    "description": "Successful response",
+                    "type": "object",
+                    "properties": {
+                        "statusCode": {
+                            "type": "number"
+                        },
+                        "message": {
+                            "type": "string"
+                        },
+                        "data": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "id": {
+                                        "type": "integer"
+                                    },
+                                    "content": {
+                                        "type": "string"
+                                    },
+                                    "created_by": {
+                                        "type": "string"
+                                    },
+                                    "created_by_id": {
+                                        "type": "integer"
+                                    },
+                                    "created_on": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "deleteFeedSchema": {
+        "schema": {
+            "parameters": [
+                {
+                    "schema": {
+                        "type": "integer"
+                    },
+                    "in": "path",
+                    "name": "id",
+                    "required": true
+                }
+            ],
+            "response": {
+                "200": {
+                    "description": "Successful response",
                     "type": "object",
                     "properties": {
                         "statusCode": {

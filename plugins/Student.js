@@ -66,10 +66,22 @@ module.exports = async (app) => {
     const getStudentInterests = async (request, response) => {
         const id = request.params.id;
         const data = await db.query(sql`
-            SELECT c.id, c.name 
-            FROM students s, courses c
-            WHERE s.student_id = ${id} 
+        SELECT
+            s.student_id,
+            u.first_name || ' ' || u.last_name as name_,
+            u.email,
+            u.mobile_no,
+            u._type,
+            c.id,
+            c.name
+        FROM
+            students s,
+            courses c,
+            users u
+        WHERE
+            s.student_id = ${id}
             AND c.id = s.course_id
+            AND u.id = s.student_id
             AND c._status = 1
         `);
         if (data && data.length === 0) {
@@ -79,6 +91,11 @@ module.exports = async (app) => {
                 data: {}
             }
         }
+        const feeds = await db.query(sql`
+            SELECT * FROM feeds 
+            WHERE created_by_id = ${id}
+            ORDER BY created_on DESC
+        `);
         let values = [];
         for (const i of data) {
             values.push({
@@ -90,7 +107,13 @@ module.exports = async (app) => {
             statusCode: statusCode.success,
             message: student.getInterest,
             data: {
-                interests: values
+                student_id: data[0]["student_id"],
+                name: data[0]["name_"],
+                email: data[0]["email"],
+                mobile_number: data[0]["mobile_no"],
+                type: data[0]["_type"],
+                interests: values,
+                feeds: feeds
             },
         }
     };
@@ -190,25 +213,25 @@ module.exports = async (app) => {
 
     // app.addHook("preValidation", authenticateToken);
     app.post(
-        '/student/interest',
+        '/api/student/interest',
         customSwagger.saveStudentSchema,
         saveStudentInterest
     );
 
     app.get(
-        '/student/interest/:id',
+        '/api/student/interest/:id',
         customSwagger.getStudentSchema,
         getStudentInterests
     );
 
     app.get(
-        '/student/tutor-list/:student_id',
+        '/api/student/tutor-list/:student_id',
         customSwagger.getTutorListSchema,
         getTutorList
     );
 
     app.post(
-        '/student/request',
+        '/api/student/request',
         customSwagger.sendRequestToTutorSchema,
         sendRequest
     )

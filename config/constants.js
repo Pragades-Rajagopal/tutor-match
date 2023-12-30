@@ -55,7 +55,10 @@ module.exports = {
     user: {
         notRegistered: 'User not registered or OTP not verified',
         incorrectAuth: 'Please enter the correct password',
-        registered: 'User registered and OTP sent to your email address'
+        registered: 'User registered and OTP sent to your email address',
+        userLoginNotFound: 'User have not logged in. Cannot logout now',
+        userlogoutSuccess: 'User logged out successfully',
+        userlogoutError: 'Error while logging out'
     },
     student: {
         interestAdded: 'Interests added',
@@ -83,6 +86,8 @@ module.exports = {
         feedAdded: 'Feed added',
         addFeedError: 'Error adding feed',
         getFeeds: 'Feeds found',
-        getFeedsError: 'Error while retrieving feeds'
+        getFeedsError: 'Error while retrieving feeds',
+        deleteFeed: 'Feed deleted successfully',
+        deleteFeedError: 'Error while deleting feed'
     }
 }

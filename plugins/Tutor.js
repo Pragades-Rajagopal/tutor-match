@@ -63,17 +63,23 @@ module.exports = async (app) => {
     const getTutorProfile = async (request, response) => {
         const id = request.params.id;
         const data = await db.query(sql`
-            SELECT c.id, c.name 
-            FROM tutors t, courses c
-            WHERE t.tutor_id = ${id} 
+        SELECT
+            t.tutor_id ,
+            u.first_name || ' ' || u.last_name as name_,
+            u.email,
+            u.mobile_no,
+            u._type,
+            c.id,
+            c.name
+        FROM
+            tutors t,
+            courses c,
+            users u
+        WHERE
+            t.tutor_id = ${id}
             AND c.id = t.course_id
+            AND u.id = t.tutor_id
             AND c._status = 1
-        `);
-        const bio = await db.query(sql`
-            SELECT t.bio, t.websites, t.mail_subscription
-            FROM tutors t
-            WHERE t.tutor_id = ${id} 
-            LIMIT 1
         `);
         if (data && data.length === 0) {
             return {
@@ -82,6 +88,17 @@ module.exports = async (app) => {
                 data: {}
             }
         }
+        const bio = await db.query(sql`
+            SELECT t.bio, t.websites, t.mail_subscription
+            FROM tutors t
+            WHERE t.tutor_id = ${id} 
+            LIMIT 1
+        `);
+        const feeds = await db.query(sql`
+            SELECT * FROM feeds 
+            WHERE created_by_id = ${id}
+            ORDER BY created_on DESC
+        `);
         let values = [];
         for (const i of data) {
             values.push({
@@ -93,10 +110,16 @@ module.exports = async (app) => {
             statusCode: statusCode.success,
             message: tutor.getInterest,
             data: {
-                interests: values,
+                tutor_id: data[0]["tutor_id"],
+                name: data[0]["name_"],
+                email: data[0]["email"],
+                mobile_number: data[0]["mobile_no"],
+                type: data[0]["_type"],
                 bio: bio[0]["bio"],
                 websites: bio[0]["websites"],
-                mailSubscription: bio[0]["mail_subscription"]
+                mailSubscription: bio[0]["mail_subscription"],
+                interests: values,
+                feeds: feeds
             },
         }
     };
@@ -126,19 +149,19 @@ module.exports = async (app) => {
      * Custom Student routes
      */
     app.post(
-        '/tutor/profile',
+        '/api/tutor/profile',
         customSwagger.saveTutorProfileSchema,
         saveTutorProfile
     );
 
     app.get(
-        '/tutor/profile/:id',
+        '/api/tutor/profile/:id',
         customSwagger.getTutorProfileSchema,
         getTutorProfile
     );
 
     app.get(
-        '/tutor/request/:id',
+        '/api/tutor/request/:id',
         getRequestInfo
     )
 }
