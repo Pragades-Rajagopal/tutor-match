@@ -7,7 +7,9 @@ module.exports = {
         error: 'Error while validating OTP',
         notFound: 'Email not found',
         verified: 'Status updated after email verification',
-        verifyError: 'Error while updating status after email verification'
+        verifyError: 'Error while updating status after email verification',
+        otpSent: 'OTP sent to your registered email address',
+        otpSentError: 'Error while resending OTP'
     },
     emailTemplates: {
         otp: 'otp',

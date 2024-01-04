@@ -39,7 +39,7 @@ module.exports = {
                 order by id desc 
                 limit 1 
             `);
-            if (!data || data.length === 0) {
+            if (data && data.length === 0) {
                 return {
                     statusCode: statusCode.notFound,
                     message: otpMessages.notFound

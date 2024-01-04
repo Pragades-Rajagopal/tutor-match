@@ -7,7 +7,7 @@ const otpService = require('../services/otpService');
 const loginService = require('../services/loginService');
 const middleware = require('../services/middlewareService');
 const customSwagger = require('../custom.swagger.json');
-const { statusCode, user, emailType } = require('../config/constants');
+const { statusCode, user, emailType, otpMessages } = require('../config/constants');
 
 /** @param {import('fastify').FastifyInstance} app */
 module.exports = async (app) => {
@@ -109,7 +109,6 @@ module.exports = async (app) => {
     const resetPassword = async (request, response) => {
         const { email, otp, password } = request.body;
         const result = await otpService.validateOTP(app, email, otp);
-        console.log(result);
         if (result.statusCode !== statusCode.success) {
             return result;
         }
@@ -128,19 +127,31 @@ module.exports = async (app) => {
         try {
             const currentTime = moment().utcOffset('+05:30').format('YYYY-MM-DD HH:mm:ss');
             const email = request.body.email;
+            const userExists = await db.query(sql`
+                SELECT * FROM users
+                WHERE email = ${email}
+                AND _status = 1
+            `);
+            if (userExists && userExists.length === 0) {
+                return {
+                    statusCode: statusCode.notFound,
+                    message: otpMessages.notFound,
+                    error: null
+                };
+            }
             const result = await otpService.generateOTP(app, email, currentTime);
             await mailService.sendRegistrationOTPEmail(app, email, result, emailType.resendOtp);
             return {
-                statusCode: 200,
-                message: 'OTP sent to your registered email address',
+                statusCode: statusCode.success,
+                message: otpMessages.otpSent,
                 error: null
             };
         } catch (error) {
             app.log.error(error);
             return {
-                statusCode: 200,
+                statusCode: statusCode.serverError,
                 message: null,
-                error: 'Error while resending OTP'
+                error: otpMessages.otpSentError
             };
         }
     }
