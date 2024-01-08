@@ -50,13 +50,50 @@ module.exports = async (app) => {
             const { sort, limit, offset } = request.query;
             let sqlQuery;
             if (sort && sort.toLowerCase() === 'asc' && limit && offset) {
-                sqlQuery = sql`SELECT * FROM feeds ORDER BY created_on ASC LIMIT ${limit} OFFSET ${offset}`;
+                sqlQuery = sql`
+                    SELECT
+                        f.*,
+                        STRFTIME('%d', created_on) || ' ' || SUBSTR('JanFebMarAprMayJunJulAugSepOctNovDec',
+                        1 + 3 * STRFTIME('%m', created_on), -3) as date_
+                    FROM
+                        feeds f
+                    ORDER BY
+                        created_on ASC 
+                    LIMIT ${limit} OFFSET ${offset}
+                `;
             } else if (sort && sort.toLowerCase() === 'asc') {
-                sqlQuery = sql`SELECT * FROM feeds ORDER BY created_on ASC`;
+                sqlQuery = sql`
+                    SELECT
+                        f.*,
+                        STRFTIME('%d', created_on) || ' ' || SUBSTR('JanFebMarAprMayJunJulAugSepOctNovDec',
+                        1 + 3 * STRFTIME('%m', created_on, -3) as date_
+                    FROM
+                        feeds f
+                    ORDER BY
+                        created_on ASC 
+                `;
             } else if (limit && offset) {
-                sqlQuery = sql`SELECT * FROM feeds ORDER BY created_on DESC LIMIT ${limit} OFFSET ${offset}`;
+                sqlQuery = sql`
+                SELECT
+                    f.*,
+                    STRFTIME('%d', created_on) || ' ' || SUBSTR('JanFebMarAprMayJunJulAugSepOctNovDec',
+                    1 + 3 * STRFTIME('%m', created_on), -3) as date_
+                FROM
+                    feeds f
+                ORDER BY
+                    created_on DESC
+                LIMIT ${limit} OFFSET ${offset}`;
             } else {
-                sqlQuery = sql`SELECT * FROM feeds ORDER BY created_on DESC`;
+                sqlQuery = sql`
+                    SELECT
+                        f.*,
+                        STRFTIME('%d', created_on) || ' ' || SUBSTR('JanFebMarAprMayJunJulAugSepOctNovDec',
+                        1 + 3 * STRFTIME('%m', created_on), -3) as date_
+                    FROM
+                        feeds f
+                    ORDER BY
+                        created_on DESC
+                `;
             }
             const data = await db.query(sqlQuery);
             return {
