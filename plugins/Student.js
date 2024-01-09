@@ -66,23 +66,31 @@ module.exports = async (app) => {
     const getStudentInterests = async (request, response) => {
         const id = request.params.id;
         const data = await db.query(sql`
-        SELECT
-            s.student_id,
-            u.first_name || ' ' || u.last_name as name_,
-            u.email,
-            u.mobile_no,
-            u._type,
-            c.id,
-            c.name
-        FROM
-            students s,
-            courses c,
-            users u
-        WHERE
-            s.student_id = ${id}
-            AND c.id = s.course_id
-            AND u.id = s.student_id
-            AND c._status = 1
+            select
+                *
+            from
+                (
+                select
+                    u.id ,
+                    u.first_name || ' ' || u.last_name as name_,
+                    u.email,
+                    u.mobile_no,
+                    u._type,
+                    c.id as course_id,
+                    c.name as course_name
+                from
+                    users u
+                full outer join students s
+                    on
+                    s.student_id = u.id
+                full outer join courses c 
+                        on
+                    s.course_id = c.id
+                    and c._status = 1
+                        )
+            where
+                _type = 'student'
+                and id = ${id}
         `);
         if (data && data.length === 0) {
             return {
@@ -92,22 +100,27 @@ module.exports = async (app) => {
             }
         }
         const feeds = await db.query(sql`
-            SELECT * FROM feeds 
+            SELECT f.*,
+                STRFTIME('%d', created_on) || ' ' || SUBSTR('JanFebMarAprMayJunJulAugSepOctNovDec',
+                1 + 3 * STRFTIME('%m', created_on), -3) as date_
+            FROM feeds f
             WHERE created_by_id = ${id}
             ORDER BY created_on DESC
         `);
         let values = [];
-        for (const i of data) {
-            values.push({
-                courseId: i.id,
-                courseName: i.name
-            });
+        if (data[0]["course_id"] !== null) {
+            for (const i of data) {
+                values.push({
+                    courseId: i.course_id,
+                    courseName: i.course_name
+                });
+            }
         }
         return {
             statusCode: statusCode.success,
             message: student.getInterest,
             data: {
-                student_id: data[0]["student_id"],
+                student_id: data[0]["id"],
                 name: data[0]["name_"],
                 email: data[0]["email"],
                 mobile_number: data[0]["mobile_no"],
