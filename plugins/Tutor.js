@@ -63,23 +63,33 @@ module.exports = async (app) => {
     const getTutorProfile = async (request, response) => {
         const id = request.params.id;
         const data = await db.query(sql`
-        SELECT
-            t.tutor_id ,
-            u.first_name || ' ' || u.last_name as name_,
-            u.email,
-            u.mobile_no,
-            u._type,
-            c.id,
-            c.name
-        FROM
-            tutors t,
-            courses c,
-            users u
-        WHERE
-            t.tutor_id = ${id}
-            AND c.id = t.course_id
-            AND u.id = t.tutor_id
-            AND c._status = 1
+        select
+            *
+        from
+            (
+            select
+                u.id ,
+                u.first_name || ' ' || u.last_name as name_,
+                u.email,
+                u.mobile_no,
+                u._type,
+                t.bio,
+                t.websites,
+                c.id as course_id,
+                c.name as course_name
+            from
+                users u
+            full outer join tutors t 
+                            on
+                t.tutor_id = u.id
+            full outer join courses c 
+                                on
+                t.course_id = c.id
+                and c._status = 1
+            )
+        where
+            _type = 'tutor'
+            and id = ${id}
         `);
         if (data && data.length === 0) {
             return {
@@ -94,30 +104,36 @@ module.exports = async (app) => {
             WHERE t.tutor_id = ${id} 
             LIMIT 1
         `);
+        console.log(bio);
         const feeds = await db.query(sql`
-            SELECT * FROM feeds 
-            WHERE created_by_id = ${id}
-            ORDER BY created_on DESC
+        SELECT f.*,
+            STRFTIME('%d', created_on) || ' ' || SUBSTR('JanFebMarAprMayJunJulAugSepOctNovDec',
+            1 + 3 * STRFTIME('%m', created_on), -3) as date_
+        FROM feeds f
+        WHERE created_by_id = ${id}
+        ORDER BY created_on DESC
         `);
         let values = [];
-        for (const i of data) {
-            values.push({
-                courseId: i.id,
-                courseName: i.name
-            });
+        if (data[0]["course_id"] !== null) {
+            for (const i of data) {
+                values.push({
+                    courseId: i.course_id,
+                    courseName: i.course_name
+                });
+            }
         }
         return {
             statusCode: statusCode.success,
             message: tutor.getInterest,
             data: {
-                tutor_id: data[0]["tutor_id"],
+                tutor_id: data[0]["id"],
                 name: data[0]["name_"],
                 email: data[0]["email"],
                 mobile_number: data[0]["mobile_no"],
                 type: data[0]["_type"],
-                bio: bio[0]["bio"],
-                websites: bio[0]["websites"],
-                mailSubscription: bio[0]["mail_subscription"],
+                bio: bio.length > 0 ? bio[0]["bio"] : "",
+                websites: bio.length > 0 ? bio[0]["websites"] : "",
+                mailSubscription: bio.length > 0 ? bio[0]["mail_subscription"] : -1,
                 interests: values,
                 feeds: feeds
             },
