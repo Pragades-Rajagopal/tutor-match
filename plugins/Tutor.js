@@ -133,7 +133,7 @@ module.exports = async (app) => {
                 type: data[0]["_type"],
                 bio: bio.length > 0 ? bio[0]["bio"] : "",
                 websites: bio.length > 0 ? bio[0]["websites"] : "",
-                mailSubscription: bio.length > 0 ? bio[0]["mail_subscription"] : -1,
+                mailSubscription: bio.length > 0 ? bio[0]["mail_subscription"] : 0,
                 interests: values,
                 feeds: feeds
             },
@@ -144,20 +144,34 @@ module.exports = async (app) => {
     const getRequestInfo = async (request, response) => {
         const tutorId = request.params.id;
         const data = await db.query(sql`
-            SELECT * FROM tutor_view_requests_vw 
-            WHERE tutor_id = ${tutorId}
+            select
+                v.tutor_id,
+                v.student_id ,
+                v.name ,
+                v.email ,
+                v.mobile_no ,
+                REPLACE(v.interests,
+                ', ',
+                '\n') as interests
+            from
+                tutor_view_requests_vw v
+            where tutor_id = ${tutorId}
         `);
         if (data && data.length === 0) {
             return {
                 statusCode: statusCode.notFound,
                 message: tutor.requestsNotFound,
-                data: {}
+                data: {
+                    studentList: []
+                }
             }
         }
         return {
             statusCode: statusCode.success,
             message: tutor.requestsFound,
-            data: data
+            data: {
+                studentList: data
+            }
         }
     };
 

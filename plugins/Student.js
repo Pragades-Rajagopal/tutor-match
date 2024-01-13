@@ -154,7 +154,9 @@ module.exports = async (app) => {
             return {
                 statusCode: statusCode.serverError,
                 message: student.fetchTutorListError,
-                data: {}
+                data: {
+                    tutorLists: []
+                }
             }
         }
     }
@@ -266,7 +268,7 @@ const getTutorListQuery = (sql, student_id) => {
             (
             SELECT
                 GROUP_CONCAT(C1.NAME,
-                ', ')
+                '\n')
             FROM
                 COURSES C1
             WHERE
