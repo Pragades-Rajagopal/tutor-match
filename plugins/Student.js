@@ -26,7 +26,6 @@ module.exports = async (app) => {
                 AND _type = 'student'
                 AND _status = 1
             `);
-            console.log(isStudent);
             if (isStudent && isStudent.length === 0) {
                 return {
                     statusCode: statusCode.error,

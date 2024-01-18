@@ -16,7 +16,7 @@
         "otp": true,
         "userLogin": true,
         "students": true,
-        "courses": true,
+        "courses": false,
         "tutors": true,
         "tutorRequests": true,
         "feeds": true
