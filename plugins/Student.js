@@ -278,7 +278,16 @@ const getTutorListQuery = (sql, student_id) => {
                     TUTORS T1
                 WHERE
                     T1.TUTOR_ID = T.TUTOR_ID)) AS courses,
-                    s.student_id
+            s.student_id,
+            (
+            SELECT
+                1
+            FROM
+                tutor_requests tr
+            WHERE
+                tr.tutor_id = T.tutor_id
+                AND tr.student_id = s.student_id
+            ) AS tutor_req_status
         FROM
             TUTORS T,
             USERS U,

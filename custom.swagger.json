@@ -575,6 +575,9 @@
                                             },
                                             "student_id": {
                                                 "type": "integer"
+                                            },
+                                            "tutor_req_status": {
+                                                "type": "integer"
                                             }
                                         }
                                     }
