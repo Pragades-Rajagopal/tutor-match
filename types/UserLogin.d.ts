@@ -4,8 +4,9 @@
  */
 declare interface UserLogin {
     id?: number;
-    createdOn: string;
     email: string;
+    loggedIn: string;
+    loggedOut?: string | null;
     token: string;
 }
 export { UserLogin };

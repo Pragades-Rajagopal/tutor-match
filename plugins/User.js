@@ -90,7 +90,7 @@ module.exports = async (app) => {
         const token = middleware.generateToken(data[0]);
         await db.query(sql`
             DELETE FROM user_login WHERE email = ${email};
-            INSERT INTO user_login (email, token, created_on)
+            INSERT INTO user_login (email, token, logged_in)
             VALUES (${email}, ${token}, ${currentTime})
         `);
         return {
@@ -165,9 +165,10 @@ module.exports = async (app) => {
     const userLogout = async (request, response) => {
         try {
             const email = request.body.email;
+            const currentTime = moment().utcOffset('+05:30').format('YYYY-MM-DD HH:mm:ss');
             const data = await db.query(sql`
-            SELECT * FROM user_login WHERE email = ${email}
-        `);
+                SELECT * FROM user_login WHERE email = ${email}
+            `);
             if (data && data.length === 0) {
                 return {
                     statusCode: statusCode.error,
@@ -175,8 +176,10 @@ module.exports = async (app) => {
                 }
             }
             await db.query(sql`
-            DELETE FROM user_login WHERE email = ${email}
-        `);
+                UPDATE user_login 
+                SET logged_out = ${currentTime}
+                WHERE email = ${email}
+            `);
             return {
                 statusCode: statusCode.success,
                 message: user.userlogoutSuccess
