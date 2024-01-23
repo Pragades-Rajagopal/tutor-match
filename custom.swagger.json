@@ -169,6 +169,47 @@
             }
         }
     },
+    "userDeactivationSchema": {
+        "schema": {
+            "body": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string"
+                    },
+                    "deviceType": {
+                        "type": "string"
+                    }
+                }
+            },
+            "response": {
+                "200": {
+                    "description": "Successful response",
+                    "type": "object",
+                    "properties": {
+                        "statusCode": {
+                            "type": "number"
+                        },
+                        "message": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "default": {
+                    "description": "Default response",
+                    "type": "object",
+                    "properties": {
+                        "statusCode": {
+                            "type": "number"
+                        },
+                        "message": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
     "resetPassword": {
         "schema": {
             "body": {

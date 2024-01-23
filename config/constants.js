@@ -60,7 +60,10 @@ module.exports = {
         registered: 'User registered and OTP sent to your email address',
         userLoginNotFound: 'User have not logged in. Cannot logout now',
         userlogoutSuccess: 'User logged out successfully',
-        userlogoutError: 'Error while logging out'
+        userlogoutError: 'Error while logging out',
+        userNotFoundForDeactivate: 'User not available for deactivation',
+        deactivationSuccess: 'User deactivated successfully',
+        deactivationError: 'Error while user deactivation process'
     },
     student: {
         interestAdded: 'Interests added',

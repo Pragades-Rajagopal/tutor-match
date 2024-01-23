@@ -1,4 +1,5 @@
 import { Course } from './Course'
+import { DeactivatedUser } from './DeactivatedUser'
 import { Feed } from './Feed'
 import { Otp } from './Otp'
 import { Student } from './Student'
@@ -9,6 +10,7 @@ import { UserLogin } from './UserLogin'
 
 interface EntityTypes {
   Course: Course
+  DeactivatedUser: DeactivatedUser
   Feed: Feed
   Otp: Otp
   Student: Student
@@ -18,4 +20,4 @@ interface EntityTypes {
   UserLogin: UserLogin
 }
 
-export { EntityTypes, Course, Feed, Otp, Student, Tutor, TutorRequest, User, UserLogin }
+export { EntityTypes, Course, DeactivatedUser, Feed, Otp, Student, Tutor, TutorRequest, User, UserLogin }

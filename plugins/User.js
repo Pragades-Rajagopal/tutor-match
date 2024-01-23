@@ -195,6 +195,87 @@ module.exports = async (app) => {
     }
 
     /**
+     * Deactivates user by delete all the user data
+     * @param {*} request 
+     * @param {*} response 
+     * @returns {object} response
+     */
+    const deactivateUser = async (request, response) => {
+        try {
+            const { email, deviceType } = request.body;
+            const data = await db.query(sql`
+                SELECT id, _type FROM users WHERE email = ${email}
+            `);
+            if (data.length === 0) {
+                return {
+                    statusCode: statusCode.error,
+                    message: user.userNotFoundForDeactivate
+                }
+            }
+            await db.query(sql`
+                INSERT INTO deactivated_users
+                (
+                    uid,
+                    first_name,
+                    last_name,
+                    email,
+                    password,
+                    mobile_no,
+                    is_email_verified,
+                    is_mobile_verified,
+                    "_type",
+                    "_status",
+                    deactivated_on,
+                    usage_days
+                ) SELECT
+                    id,
+                    first_name,
+                    last_name,
+                    email,
+                    password,
+                    mobile_no,
+                    is_email_verified,
+                    is_mobile_verified,
+                    "_type",
+                    "_status",
+                    DATETIME(CURRENT_TIMESTAMP, 'localtime') ,
+                    CAST(JULIANDAY(DATE('now')) - JULIANDAY(DATE("_created_on")) AS INTEGER)
+                FROM
+                    users u
+                WHERE
+                    u.id = ${data[0]["id"]}
+            `);
+            await db.query(sql`
+                DELETE FROM feeds WHERE created_by_id = ${data[0]["id"]};
+                DELETE FROM otp WHERE email = ${email};
+            `);
+            if (data[0]["_type"] === 'student') {
+                await db.query(sql`
+                    DELETE FROM tutor_requests WHERE student_id = ${data[0]["id"]} ;
+                    DELETE FROM students WHERE student_id = ${data[0]["id"]};
+                    DELETE FROM users WHERE id = ${data[0]["id"]};
+                `);
+            } else if (data[0]["_type"] === 'tutor') {
+                await db.query(sql`
+                    DELETE FROM tutors WHERE tutor_id = ${data[0]["id"]};
+                    DELETE FROM users WHERE id = ${data[0]["id"]};
+                `);
+            }
+            return {
+                statusCode: statusCode.success,
+                message: user.deactivationSuccess
+            }
+        } catch (error) {
+            app.log.error(user.deactivationError);
+            app.log.error(error);
+            return {
+                statusCode: statusCode.serverError,
+                message: user.deactivationError
+            }
+        }
+    }
+
+    /**
      * Custom User routes
      */
     app.post(
@@ -225,5 +306,11 @@ module.exports = async (app) => {
         '/api/logout',
         customSwagger.logoutSchema,
         userLogout
+    );
+
+    app.post(
+        '/api/deactivate',
+        customSwagger.userDeactivationSchema,
+        deactivateUser
     );
 }

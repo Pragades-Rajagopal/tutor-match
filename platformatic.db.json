@@ -19,7 +19,8 @@
         "courses": false,
         "tutors": true,
         "tutorRequests": true,
-        "feeds": true
+        "feeds": true,
+        "deactivatedUsers": true
       }
     }
   },
