@@ -104,7 +104,6 @@ module.exports = async (app) => {
             WHERE t.tutor_id = ${id} 
             LIMIT 1
         `);
-        console.log(bio);
         const feeds = await db.query(sql`
         SELECT f.*,
             STRFTIME('%d', created_on) || ' ' || SUBSTR('JanFebMarAprMayJunJulAugSepOctNovDec',

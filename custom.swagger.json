@@ -802,5 +802,78 @@
                 }
             }
         }
+    },
+    "feedUserDataSchema": {
+        "schema": {
+            "parameters": [
+                {
+                    "schema": {
+                        "type": "integer"
+                    },
+                    "in": "path",
+                    "name": "userid",
+                    "required": true
+                }
+            ],
+            "response": {
+                "200": {
+                    "description": "Successful response",
+                    "type": "object",
+                    "properties": {
+                        "statusCode": {
+                            "type": "number"
+                        },
+                        "message": {
+                            "type": "string"
+                        },
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "integer"
+                                },
+                                "name": {
+                                    "type": "string"
+                                },
+                                "email": {
+                                    "type": "string"
+                                },
+                                "bio": {
+                                    "type": "string"
+                                },
+                                "websites": {
+                                    "type": "string"
+                                },
+                                "interests": {
+                                    "type": "string"
+                                },
+                                "userType": {
+                                    "type": "string"
+                                },
+                                "mail_subscription": {
+                                    "type": "integer"
+                                }
+                            }
+                        }
+                    }
+                },
+                "default": {
+                    "description": "Default response",
+                    "type": "object",
+                    "properties": {
+                        "statusCode": {
+                            "type": "number"
+                        },
+                        "message": {
+                            "type": "string"
+                        },
+                        "data": {
+                            "type": "object",
+                            "properties": {}
+                        }
+                    }
+                }
+            }
+        }
     }
 }

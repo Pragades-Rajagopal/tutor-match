@@ -93,6 +93,9 @@ module.exports = {
         getFeeds: 'Feeds found',
         getFeedsError: 'Error while retrieving feeds',
         deleteFeed: 'Feed deleted successfully',
-        deleteFeedError: 'Error while deleting feed'
+        deleteFeedError: 'Error while deleting feed',
+        userNotFound: 'User not found',
+        success: 'success',
+        error: 'Unable to fetch feed user data'
     }
 }
