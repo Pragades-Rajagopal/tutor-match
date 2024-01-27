@@ -28,7 +28,7 @@ module.exports = async (app) => {
             const result = await originalSave(options);
             if (result) {
                 const result = await otpService.generateOTP(app, email, currentTime);
-                await mailService.sendRegistrationOTPEmail(app, email, result, emailType.register);
+                mailService.sendRegistrationOTPEmail(app, email, result, emailType.register);
             }
             app.log.info(result);
             return result;

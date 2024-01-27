@@ -196,7 +196,7 @@ module.exports = async (app) => {
             const tutorInfo_ = tutorInfo[0];
             const studentInfo_ = studentInfo[0];
             if (tutorInfo_.mail_subscription === 1) {
-                await mailService.sendTutorRequest(app, tutorInfo_.email, {
+                mailService.sendTutorRequest(app, tutorInfo_.email, {
                     name: studentInfo_.name,
                     interests: studentInfo_.interests,
                     mail: studentInfo_.email
