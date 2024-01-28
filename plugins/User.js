@@ -140,7 +140,7 @@ module.exports = async (app) => {
                 };
             }
             const result = await otpService.generateOTP(app, email, currentTime);
-            await mailService.sendRegistrationOTPEmail(app, email, result, emailType.resendOtp);
+            mailService.sendRegistrationOTPEmail(app, email, result, emailType.resendOtp);
             return {
                 statusCode: statusCode.success,
                 message: otpMessages.otpSent,
