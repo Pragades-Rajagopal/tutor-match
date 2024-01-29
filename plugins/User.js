@@ -276,6 +276,32 @@ module.exports = async (app) => {
     }
 
     /**
+     * Get all deactivated users
+     * @param {*} request 
+     * @param {*} response 
+     * @returns {object} response
+     */
+    const getDeactivatedUsers = async (request, response) => {
+        try {
+            const result = await db.query(sql`
+                SELECT * FROM deactivated_users
+            `);
+            return {
+                statusCode: statusCode.success,
+                message: 'success',
+                data: result
+            };
+        } catch (error) {
+            app.log.error(error);
+            return {
+                statusCode: statusCode.serverError,
+                error: error,
+                data: []
+            }
+        }
+    }
+
+    /**
      * Custom User routes
      */
     app.post(
@@ -312,5 +338,10 @@ module.exports = async (app) => {
         '/api/deactivate',
         customSwagger.userDeactivationSchema,
         deactivateUser
+    );
+
+    app.get(
+        '/api/internal/deactivate-users',
+        getDeactivatedUsers
     );
 }
