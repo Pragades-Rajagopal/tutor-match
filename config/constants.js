@@ -97,5 +97,9 @@ module.exports = {
         userNotFound: 'User not found',
         success: 'success',
         error: 'Unable to fetch feed user data'
+    },
+    courses: {
+        success: 'Success',
+        error: 'Something went wrong'
     }
 }
