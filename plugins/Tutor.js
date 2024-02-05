@@ -139,7 +139,12 @@ module.exports = async (app) => {
         }
     };
 
-
+    /**
+     * Retrieves students requests for a tutor
+     * @param {*} request 
+     * @param {*} response 
+     * @returns {object}
+     */
     const getRequestInfo = async (request, response) => {
         const tutorId = request.params.id;
         const data = await db.query(sql`
@@ -151,7 +156,8 @@ module.exports = async (app) => {
                 v.mobile_no ,
                 REPLACE(v.interests,
                 ', ',
-                '\n') as interests
+                '\n') as interests,
+                v.tutor_req_hide
             from
                 tutor_view_requests_vw v
             where tutor_id = ${tutorId}
@@ -170,6 +176,47 @@ module.exports = async (app) => {
             message: tutor.requestsFound,
             data: {
                 studentList: data
+            }
+        }
+    };
+
+
+    /**
+     * Hides the student request
+     * @param {*} request 
+     * @param {*} response 
+     * @returns {object}
+     */
+    const hideRequest = async (request, response) => {
+        try {
+            const { tutorId, studentId } = request.body;
+            const isRequestExists = await db.query(sql`
+                SELECT 1 "check" FROM tutor_requests
+                WHERE tutor_id = ${tutorId}
+                AND student_id = ${studentId}
+            `);
+            if (isRequestExists && isRequestExists.length === 0) {
+                return {
+                    statusCode: statusCode.error,
+                    message: tutor.requestsNotFound
+                }
+            }
+            await db.query(sql`
+                UPDATE tutor_requests
+                SET tutor_req_hide = 1
+                WHERE tutor_id = ${tutorId}
+                AND student_id = ${studentId}
+            `);
+            return {
+                statusCode: statusCode.success,
+                message: tutor.requestHidden
+            }
+        } catch (error) {
+            app.log.error(tutor.requestHiddenError);
+            app.log.error(error);
+            return {
+                statusCode: statusCode.serverError,
+                message: tutor.requestHiddenError
             }
         }
     };
@@ -193,4 +240,10 @@ module.exports = async (app) => {
         '/api/tutor/request/:id',
         getRequestInfo
     )
+
+    app.post(
+        '/api/tutor/request-hide',
+        customSwagger.hideStudentRequest,
+        hideRequest
+    );
 }

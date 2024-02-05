@@ -14,6 +14,8 @@ CREATE TABLE IF NOT EXISTS tutor_requests (
     id INTEGER PRIMARY KEY,
     tutor_id INTEGER NOT NULL,
     student_id INTEGER NOT NULL,
+    tutor_req_hide INTEGER CHECK( tutor_req_hide IN (0, 1) ) NOT NULL DEFAULT 0,
+    student_req_hide INTEGER CHECK( student_req_hide IN (0, 1) ) NOT NULL DEFAULT 0,
     _created_on DATETIME NOT NULL,
     FOREIGN KEY (tutor_id) REFERENCES users (id),
     FOREIGN KEY (student_id) REFERENCES users (id)

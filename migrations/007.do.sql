@@ -74,7 +74,9 @@ SELECT
 		COURSES C
 	WHERE
 		C.ID = S.COURSE_ID),
-	', ') AS interests
+	', ') AS interests,
+	TR.tutor_req_hide,
+	TR.student_req_hide
 FROM
 	TUTOR_REQUESTS TR,
 	STUDENTS S,

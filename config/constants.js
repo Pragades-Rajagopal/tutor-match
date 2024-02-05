@@ -85,7 +85,9 @@ module.exports = {
         interestNotFound: 'Interests not found for the tutor',
         getInterest: 'Interests found',
         requestsNotFound: 'Requests not available for this tutor',
-        requestsFound: 'Requests for the tutor'
+        requestsFound: 'Requests for the tutor',
+        requestHidden: 'Request marked as hidden',
+        requestHiddenError: 'Error while marking the request'
     },
     feeds: {
         feedAdded: 'Feed added',
