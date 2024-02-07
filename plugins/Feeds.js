@@ -58,7 +58,7 @@ module.exports = async (app) => {
                     FROM
                         feeds f
                     ORDER BY
-                        created_on ASC 
+                        id ASC 
                     LIMIT ${limit} OFFSET ${offset}
                 `;
             } else if (sort && sort.toLowerCase() === 'asc') {
@@ -70,7 +70,7 @@ module.exports = async (app) => {
                     FROM
                         feeds f
                     ORDER BY
-                        created_on ASC 
+                        id ASC 
                 `;
             } else if (limit && offset) {
                 sqlQuery = sql`
@@ -81,7 +81,7 @@ module.exports = async (app) => {
                 FROM
                     feeds f
                 ORDER BY
-                    created_on DESC
+                    id DESC
                 LIMIT ${limit} OFFSET ${offset}`;
             } else {
                 sqlQuery = sql`
@@ -92,7 +92,7 @@ module.exports = async (app) => {
                     FROM
                         feeds f
                     ORDER BY
-                        created_on DESC
+                        id DESC
                 `;
             }
             const data = await db.query(sqlQuery);
